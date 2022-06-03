@@ -28,6 +28,7 @@ import FilePlus from '../../components/Icons/FilePlus'
 import MoreVertical from '../../components/Icons/MoreVertical'
 import useSWR from 'swr'
 import { fetcher } from '../../lib/fetcher'
+import { upload } from '../../lib/upload'
 
 interface Roles {
   name: string
@@ -95,6 +96,7 @@ const Roles: React.FC = () => {
       <Seo title='Cargos' description='Listagem de cargos' />
       <Layout>
         <PageTitle>Organização</PageTitle>
+        <button onClick = {() => upload()}>teste</button>
         <Content>
           <Tabs>
             <Tabs.Tab url='/agents' isActive={false}>
