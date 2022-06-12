@@ -24,12 +24,12 @@ const Layout = (props: MainProps) => {
     <Wrapper>
       <Header>
         <LogoContainer>
-          <Image src='/pedido-pago-logo.png' alt='brand logo' height={35} width={35} />
+         
         </LogoContainer>
         <UserContainer>
-          <UserAvatar>LZ</UserAvatar>
+          <UserAvatar>CP</UserAvatar>
           <UserData>
-            <Username>Luiz Zlochevsky</Username>
+            <Username>Célio Pieczarka</Username>
             <Data>meus dados</Data>
           </UserData>
         </UserContainer>
