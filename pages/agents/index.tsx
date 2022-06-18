@@ -37,8 +37,9 @@ import MoreVertical from '../../components/Icons/MoreVertical'
 import { fetcher } from '../../lib/fetcher'
 import useSWR from 'swr'
 
+let baseURL = "http://localhost:3000/agents/"
 interface Agent {
-  agent_id: number
+  _id: string
   name: string
   image: string
   department: string
@@ -47,15 +48,27 @@ interface Agent {
   status: string
 }
 interface DataProps {
-  items: [Agent]
+  results: {
+    docs: [Agent],
+    hasNextPage: boolean
+    hasPrevPage: boolean
+    limit: number
+    nextPage: boolean
+    page: number
+    pagingCounter: number
+    prevPage: number
+    totalDocs:number
+    totalPages: number
+  }
+  success: boolean
 }
 
 interface IsOpenList {
-  [key: number]: boolean
+  [key: string]: boolean
 }
 
 const Agents: React.FC = ({}) => {
-  const { data, error } = useSWR<DataProps>('https://pp-api-desafio.herokuapp.com/agents', fetcher)
+  const { data, error } = useSWR<DataProps>(baseURL, fetcher)
   const [modalIsOpenList, setModalIsOpenList] = useState<IsOpenList>({})
   const [dropdownIsOpenList, setDropdownIsOpenList] = useState<IsOpenList>({})
   const [modalCategoriesIsOpen, setModalCategoriesIsOpen] = useState(false)
@@ -63,8 +76,8 @@ const Agents: React.FC = ({}) => {
   useEffect(() => {
     const createActiveStatusList = () => {
       if (data) {
-        const activeStatusList = data.items.reduce((prev, curr) => {
-          return { ...prev, [curr.agent_id]: false }
+        const activeStatusList = data.results.docs.reduce((prev, curr) => {
+          return { ...prev, [curr._id]: false }
         }, {})
         setModalIsOpenList(activeStatusList)
         setDropdownIsOpenList(activeStatusList)
@@ -74,31 +87,31 @@ const Agents: React.FC = ({}) => {
   }, [data])
 
   const updateActiveStatusList = (
-    id: number,
+    _id: string,
     prevList: IsOpenList,
     updateFn: Dispatch<SetStateAction<IsOpenList>>
   ) => {
     let newList = { ...prevList }
-    if (newList[id]) {
-      Object.keys(newList).forEach(item => (newList[Number(item)] = false))
+    if (newList[_id]) {
+      Object.keys(newList).forEach(item => (newList[item] = false))
     } else {
-      Object.keys(newList).forEach(item => (newList[Number(item)] = false))
-      newList[id] = !newList[id]
+      Object.keys(newList).forEach(item => (newList[item] = false))
+      newList[_id] = !newList[_id]
     }
     updateFn(newList)
   }
-  const toggleOptionsModal = (id: number) => {
-    updateActiveStatusList(id, modalIsOpenList, setModalIsOpenList)
+  const toggleOptionsModal = (_id: string) => {
+    updateActiveStatusList(_id, modalIsOpenList, setModalIsOpenList)
   }
-  const toggleDropdown = (id: number) => {
-    updateActiveStatusList(id, dropdownIsOpenList, setDropdownIsOpenList)
+  const toggleDropdown = (_id: string) => {
+    updateActiveStatusList(_id, dropdownIsOpenList, setDropdownIsOpenList)
   }
   const toggleCategoriesModal = (state: boolean) => {
     setModalCategoriesIsOpen(state)
   }
   const closeAnyActiveOptionsModal = () => {
     let newList = { ...modalIsOpenList }
-    Object.keys(newList).forEach(item => (newList[Number(item)] = false))
+    Object.keys(newList).forEach(item => (newList[item] = false))
     setModalIsOpenList(newList)
   }
   return (
@@ -123,7 +136,7 @@ const Agents: React.FC = ({}) => {
           />
           <SearchInput />
           <SectionTitle>Listagem de colaboradores</SectionTitle>
-          {data?.items && (
+          {data?.results.docs && (
             <TableDrop>
               <TableDrop.Header>
                 <TableDrop.Row numberOfColumns={7}>
@@ -136,32 +149,26 @@ const Agents: React.FC = ({}) => {
                 </TableDrop.Row>
               </TableDrop.Header>
               <TableDrop.Body>
-                {data.items.map(agent => (
+                {data.results.docs.map(agent => (
                   <TableDrop.Row
                     numberOfColumns={7}
-                    key={agent.agent_id}
-                    isActive={dropdownIsOpenList[agent.agent_id]}
+                    key={agent._id}
+                    isActive={dropdownIsOpenList[agent._id]}
                     status={agent.status}
                     maxHeight={'95px'}
                   >
-                    <TableDrop.Td onClick={() => toggleDropdown(agent.agent_id)} gridSpan>
+                    <TableDrop.Td onClick={() => toggleDropdown(agent._id)} gridSpan>
                       <Label>Nome Completo</Label>
                       <AvatarNameContainer>
                         <ImageWrapper
                           style={{ position: 'relative', minHeight: '32px', minWidth: '32px' }}
                         >
-                          <Image
-                            src={agent.image}
-                            layout='fill'
-                            objectFit='cover'
-                            alt='avatar'
-                            style={{ borderRadius: '50%' }}
-                          />
+                          
                         </ImageWrapper>
                         <Name>{agent.name}</Name>
                       </AvatarNameContainer>
                       <DropdownIcon>
-                        {!dropdownIsOpenList[agent.agent_id] ? <Down /> : <Up />}
+                        {!dropdownIsOpenList[agent._id] ? <Down /> : <Up />}
                       </DropdownIcon>
                     </TableDrop.Td>
 
@@ -185,11 +192,11 @@ const Agents: React.FC = ({}) => {
                     </TableDrop.Td>
 
                     <TableDrop.Td>
-                      <DotsIcon onClick={() => toggleOptionsModal(agent.agent_id)}>
+                      <DotsIcon onClick={() => toggleOptionsModal(agent._id)}>
                         <MoreVertical />
                       </DotsIcon>
                       <ModalOptions
-                        isOpen={modalIsOpenList[agent.agent_id]}
+                        isOpen={modalIsOpenList[agent._id]}
                         closeFn={closeAnyActiveOptionsModal}
                       >
                         <ModalOptions.Option url={'/agents/1'} isActive={true} icon={Eye}>
@@ -199,7 +206,7 @@ const Agents: React.FC = ({}) => {
                           Excluir
                         </ModalOptions.Option>
                       </ModalOptions>
-                      <ActionsContainer onClick={() => toggleOptionsModal(agent.agent_id)}>
+                      <ActionsContainer onClick={() => toggleOptionsModal(agent._id)}>
                         <FilePlus />
                         <ActionLabel>Ações</ActionLabel>
                       </ActionsContainer>
