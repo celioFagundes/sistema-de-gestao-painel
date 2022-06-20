@@ -9,16 +9,23 @@ import {
   Wrapper,
 } from './styles'
 
-type Props = {}
+type Props = {
+  page: number
+  totalPages:number 
+  hasNext: boolean
+  hasPrev: boolean
+  handleNextPage: () => void
+  handlePrevPage: () => void
+}
 
 const Pagination = (props: Props) => {
   return (
     <Wrapper>
-      <PaginationButton isDisabled={true} role ='previous-page'>
+      <PaginationButton isDisabled={!props.hasPrev} role ='previous-page' onClick={props.handlePrevPage}>
         <Left />
       </PaginationButton>
-      <PaginationLabel>1 de 10</PaginationLabel>
-      <PaginationButton isDisabled={false} role ='next-page'>
+      <PaginationLabel>{props.page} de {props.totalPages}</PaginationLabel>
+      <PaginationButton isDisabled={!props.hasNext} role ='next-page' onClick={props.handleNextPage}>
         <Right />
       </PaginationButton>
       <MobilePagination>

@@ -1,22 +1,35 @@
 import { Container, Message, Option, Select, Wrapper } from './styles'
 
-type Props = {}
-
+type Props = {
+  limit: number
+  totalDocs: number
+  onChange: (value:number) => void
+}
+let selectOptions = [5, 10, 20, 30, 40, 50]
 const PaginationSelect = (props: Props) => {
   return (
     <Wrapper>
-      <Message>Mostrando 10 de 50 registros</Message>
+      <Message>
+        Mostrando {props.limit} de {props.totalDocs} registros
+      </Message>
       <Container htmlFor='pagination-select'>
         <Select
           id='pagination-select'
           placeholder='Selecionar quantidade de registros a mostrar'
           data-testid='pagination-select'
+          defaultValue={props.limit}
+          onChange= {(evt) => props.onChange(Number(evt.target.value))}
         >
-          <Option data-testid='pagination-select-option'>5</Option>
-          <Option data-testid='pagination-select-option'>10</Option>
-          <Option data-testid='pagination-select-option'>20</Option>
-          <Option data-testid='pagination-select-option'>40</Option>
-          <Option data-testid='pagination-select-option'>50</Option>
+          {selectOptions.map(opt => (
+            opt <= props.totalDocs &&
+            <Option
+              key={opt}
+              value={opt}
+              data-testid='pagination-select-option'
+            >
+              {opt}
+            </Option>
+          ))}
         </Select>
       </Container>
     </Wrapper>
