@@ -102,6 +102,9 @@ const Agents: React.FC = ({}) => {
     setLimit(value)
     setPage(1)
   }
+  const handleLoadMore = () => {
+    setLimit(limit + 10)
+  }
   const updateActiveStatusList = (
     _id: string,
     prevList: IsOpenList,
@@ -237,12 +240,15 @@ const Agents: React.FC = ({}) => {
                   onChange={handleSelectLimit}
                 />
                 <Pagination
+                  limit={limit}
+                  totalDocs={data.results.totalDocs}
                   page={page}
                   totalPages={data.results.totalPages}
                   hasPrev={data.results.hasPrevPage}
                   hasNext={data.results.hasNextPage}
                   handleNextPage={handleNextPage}
                   handlePrevPage={handlePrevPage}
+                  handleLoadMore = {handleLoadMore}
                 />
               </BottomContainer>
             </>

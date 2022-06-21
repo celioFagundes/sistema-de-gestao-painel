@@ -9,12 +9,7 @@ export const Wrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   @media (max-width: 768px) {
-    justify-content: center;
-    width: 100%;
-    padding: 14px 24px;
-    border: 2px solid #b5f1dd;
-    border-radius: 8px;
-    cursor: pointer;
+    width:100%;
   }
 `
 export const PaginationButton = styled.button<buttonProps>`
@@ -25,7 +20,7 @@ export const PaginationButton = styled.button<buttonProps>`
   border-color: ${props => (props.isDisabled ? '#cad6d1' : '#709085')};
   border-radius: 8px 0px 0px 8px;
   transition: all 100ms ease-in-out;
-  & > svg > path{
+  & > svg > path {
     fill: ${props => (props.isDisabled ? '#cad6d1' : '#709085')};
   }
   &:nth-of-type(2) {
@@ -55,6 +50,12 @@ export const MobilePagination = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  justify-content: center;
+  width:100%;
+  padding: 14px 24px;
+  border: 2px solid #b5f1dd;
+  border-radius: 8px;
+  cursor: pointer;
   @media (min-width: 768px) {
     display: none;
   }

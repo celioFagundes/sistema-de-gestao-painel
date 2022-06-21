@@ -10,28 +10,39 @@ import {
 } from './styles'
 
 type Props = {
+  limit: number
+  totalDocs: number
   page: number
-  totalPages:number 
+  totalPages: number
   hasNext: boolean
   hasPrev: boolean
   handleNextPage: () => void
   handlePrevPage: () => void
+  handleLoadMore: () => void
 }
 
 const Pagination = (props: Props) => {
   return (
     <Wrapper>
-      <PaginationButton isDisabled={!props.hasPrev} role ='previous-page' onClick={props.handlePrevPage}>
+      <PaginationButton
+        isDisabled={!props.hasPrev}
+        role='previous-page'
+        onClick={props.handlePrevPage}
+      >
         <Left />
       </PaginationButton>
-      <PaginationLabel>{props.page} de {props.totalPages}</PaginationLabel>
-      <PaginationButton isDisabled={!props.hasNext} role ='next-page' onClick={props.handleNextPage}>
+      <PaginationLabel>
+        {props.page} de {props.totalPages}
+      </PaginationLabel>
+      <PaginationButton isDisabled={!props.hasNext} role='next-page' onClick={props.handleNextPage}>
         <Right />
       </PaginationButton>
-      <MobilePagination>
-        <Refresh />
-        <MobilePaginationLabel role ='load-more'>Carregar mais</MobilePaginationLabel>
-      </MobilePagination>
+      {props.limit < props.totalDocs && (
+        <MobilePagination onClick={props.handleLoadMore}>
+          <Refresh />
+          <MobilePaginationLabel role='load-more'>Carregar mais</MobilePaginationLabel>
+        </MobilePagination>
+      )}
     </Wrapper>
   )
 }

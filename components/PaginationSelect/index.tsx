@@ -5,7 +5,7 @@ type Props = {
   totalDocs: number
   onChange: (value:number) => void
 }
-let selectOptions = [5, 10, 20, 30, 40, 50]
+let selectOptions = [ 10, 20, 30, 40, 50]
 const PaginationSelect = (props: Props) => {
   return (
     <Wrapper>
@@ -17,7 +17,7 @@ const PaginationSelect = (props: Props) => {
           id='pagination-select'
           placeholder='Selecionar quantidade de registros a mostrar'
           data-testid='pagination-select'
-          defaultValue={props.limit}
+          value={props.limit}
           onChange= {(evt) => props.onChange(Number(evt.target.value))}
         >
           {selectOptions.map(opt => (
