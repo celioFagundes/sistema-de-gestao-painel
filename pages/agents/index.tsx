@@ -67,10 +67,15 @@ interface IsOpenList {
 }
 
 const Agents: React.FC = ({}) => {
-  const [limit, setLimit] = useState(10)
-  const [page, setPage] = useState(1)
+  const [queryOptions, setQueryOptions] = useState({
+    limit: 10,
+    page: 1,
+    field: '_id',
+    criteria: 'asc',
+    slug: '',
+  })
   const { data, error } = useSWR<DataProps>(
-    `http://localhost:3000/agents/?page=${page}&limit=${limit}`,
+    `http://localhost:3000/agents/?page=${queryOptions.page}&limit=${queryOptions.limit}&field=${queryOptions.field}&criteria=${queryOptions.criteria}&slug=${queryOptions.slug}`,
     fetcher
   )
   const [modalIsOpenList, setModalIsOpenList] = useState<IsOpenList>({})
@@ -91,20 +96,28 @@ const Agents: React.FC = ({}) => {
   }, [data])
 
   const handleNextPage = () => {
-    let nextPage = page + 1
-    setPage(nextPage)
+    if(data && data.results.hasNextPage){
+      let nextPage = queryOptions.page + 1
+      setQueryOptions({...queryOptions, page:nextPage})
+    }
+   
   }
   const handlePrevPage = () => {
-    let prevPage = page - 1
-    setPage(prevPage)
+    if(data && data.results.hasPrevPage){
+      let prevPage = queryOptions.page - 1
+      setQueryOptions({...queryOptions, page:prevPage})
+    }
   }
   const handleSelectLimit = (value: number) => {
-    setLimit(value)
-    setPage(1)
+    setQueryOptions({...queryOptions, limit:value, page: 1})
   }
   const handleLoadMore = () => {
-    setLimit(limit + 10)
+    setQueryOptions({...queryOptions, limit: queryOptions.limit + 10})
   }
+  const handleSearchInput = (slug:string) => {
+    setQueryOptions({...queryOptions, slug: slug})
+  }
+
   const updateActiveStatusList = (
     _id: string,
     prevList: IsOpenList,
@@ -153,7 +166,7 @@ const Agents: React.FC = ({}) => {
             closeFn={() => toggleCategoriesModal(false)}
             label={'Colaboradores'}
           />
-          <SearchInput />
+          <SearchInput onSubmit = {handleSearchInput} />
           <SectionTitle>Listagem de colaboradores</SectionTitle>
           {data?.results.docs && (
             <>
@@ -235,20 +248,20 @@ const Agents: React.FC = ({}) => {
               </TableDrop>
               <BottomContainer>
                 <PaginationSelect
-                  limit={limit}
+                  limit={queryOptions.limit}
                   totalDocs={data.results.totalDocs}
                   onChange={handleSelectLimit}
                 />
                 <Pagination
-                  limit={limit}
+                  limit={queryOptions.limit}
                   totalDocs={data.results.totalDocs}
-                  page={page}
+                  page={queryOptions.page}
                   totalPages={data.results.totalPages}
                   hasPrev={data.results.hasPrevPage}
                   hasNext={data.results.hasNextPage}
                   handleNextPage={handleNextPage}
                   handlePrevPage={handlePrevPage}
-                  handleLoadMore = {handleLoadMore}
+                  handleLoadMore={handleLoadMore}
                 />
               </BottomContainer>
             </>
