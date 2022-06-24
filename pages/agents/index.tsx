@@ -114,8 +114,8 @@ const Agents: React.FC = ({}) => {
   const handleLoadMore = () => {
     setQueryOptions({...queryOptions, limit: queryOptions.limit + 10})
   }
-  const handleSearchInput = (slug:string) => {
-    setQueryOptions({...queryOptions, slug: slug})
+  const handleSearchInput = (value:string) => {
+    setQueryOptions({...queryOptions, slug: value})
   }
 
   const updateActiveStatusList = (
@@ -168,7 +168,13 @@ const Agents: React.FC = ({}) => {
           />
           <SearchInput onSubmit = {handleSearchInput} />
           <SectionTitle>Listagem de colaboradores</SectionTitle>
-          {data?.results.docs && (
+          { (!data || data.results.docs.length < 1)  && 
+            <p>
+              Nenhum registro encontrado
+            </p>
+          
+          }
+          {(data && data.results.docs.length > 0) && (
             <>
               <TableDrop>
                 <TableDrop.Header>
@@ -178,7 +184,7 @@ const Agents: React.FC = ({}) => {
                     <TableDrop.Th>Cargo</TableDrop.Th>
                     <TableDrop.Th>Unidade</TableDrop.Th>
                     <TableDrop.Th>Status</TableDrop.Th>
-                    <TableDrop.Th></TableDrop.Th>
+                    <TableDrop.Th><button>Ordenar por:</button></TableDrop.Th>
                   </TableDrop.Row>
                 </TableDrop.Header>
                 <TableDrop.Body>
