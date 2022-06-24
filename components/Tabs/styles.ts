@@ -28,6 +28,6 @@ export const TabLink = styled.a<IsActive>`
   transition: all 200ms ease-in-out;
   &:hover {
     color: ${props => !props.isActive && '#587169'};
-    border-color: ${props => !props.isActive && '#ABE0CE'};
+    border-color: ${props => !props.isActive && '#abe0ce'};
   }
 `

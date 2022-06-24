@@ -1,9 +1,11 @@
 import { useState } from 'react'
+import { AiOutlineClose } from 'react-icons/ai'
 import Search from '../Icons/Search'
-import { Input, Label, Wrapper, Icon } from './styles'
+import { Input, Label, Wrapper, Icon, SearchResults, ResetSearchButton } from './styles'
 
 type Props = {
   onSubmit: (slug: string) => void
+  querySlug: string
 }
 
 const SearchInput = (props: Props) => {
@@ -14,8 +16,12 @@ const SearchInput = (props: Props) => {
       props.onSubmit(inputValue)
     }
   }
-  const handleInputChange = (text:string) =>{
+  const handleInputChange = (text: string) => {
     setInputValue(text)
+  }
+  const resetSearch = () =>{
+    setInputValue('')
+    props.onSubmit('')
   }
   return (
     <Wrapper>
@@ -25,10 +31,19 @@ const SearchInput = (props: Props) => {
       </Icon>
       <Input
         onKeyDown={handleKeyDown}
-        onChange={(evt) => handleInputChange(evt.target.value)}
+        onChange={evt => handleInputChange(evt.target.value)}
         placeholder='Pesquise por nome ou número do documento'
+        value={inputValue}
         id='search-input'
       />
+      { props.querySlug !== '' &&(
+        <SearchResults>
+          <p>Mostrando resultados para "{props.querySlug}"</p>
+          <ResetSearchButton onClick={resetSearch}>
+            <AiOutlineClose size={18}/>
+          </ResetSearchButton>
+        </SearchResults>
+      )}
     </Wrapper>
   )
 }

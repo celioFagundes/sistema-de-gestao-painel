@@ -20,13 +20,12 @@ export const Label = styled.label`
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
-  
 `
 export const Icon = styled.div`
   position: absolute;
   top: 21px;
   left: 20px;
-  color:#34423D;
+  color: #34423d;
 `
 export const Input = styled.input`
   height: 100%;
@@ -41,5 +40,33 @@ export const Input = styled.input`
   font-weight: 500;
   font-size: 16px;
   outline: none;
-  
+`
+export const SearchResults = styled.div`
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  top: 75px;
+  left: 0px;
+  padding: 5px 5px 5px 15px;
+  border-radius: 5px;
+  background-color: #abe0ce;
+  font-size: 14px;
+`
+export const ResetSearchButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height:100%;
+  padding:2px;
+  transition: all 100ms;
+  margin-left: 15px;
+  border:0;
+  border-radius: 5px;
+  background-color:  #587169;
+  color: #fff;
+  cursor:pointer;
+  &:hover{
+    background-color: #000;
+  }
 `

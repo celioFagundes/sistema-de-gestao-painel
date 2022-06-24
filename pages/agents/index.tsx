@@ -116,7 +116,7 @@ const Agents: React.FC = ({}) => {
     setQueryOptions({ ...queryOptions, limit: queryOptions.limit + 10 })
   }
   const handleSearchInput = (value: string) => {
-    setQueryOptions({ ...queryOptions, slug: value })
+    setQueryOptions({ ...queryOptions, slug: value.trim() })
   }
   const handleSort = (value: string) =>{
     if(value === queryOptions.field){
@@ -174,7 +174,7 @@ const Agents: React.FC = ({}) => {
             closeFn={() => toggleCategoriesModal(false)}
             label={'Colaboradores'}
           />
-          <SearchInput onSubmit={handleSearchInput} />
+          <SearchInput onSubmit={handleSearchInput} querySlug = {queryOptions.slug}/>
           <SectionTitle>Listagem de colaboradores</SectionTitle>
           {(!data || data.results.docs.length < 1) && <p>Nenhum registro encontrado</p>}
           {data && data.results.docs.length > 0 && (
