@@ -42,13 +42,12 @@ export const Input = styled.input`
   outline: none;
 `
 export const SearchResults = styled.div`
-  position: absolute;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  top: 75px;
-  left: 0px;
+  width:max-content;
   padding: 5px 5px 5px 15px;
+  margin-top:20px;
   border-radius: 5px;
   background-color: #abe0ce;
   font-size: 14px;

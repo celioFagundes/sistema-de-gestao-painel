@@ -24,6 +24,6 @@ export const PageTitle = styled(BoldText)`
 `
 export const SectionTitle = styled(BoldText)`
   font-size: 16px;
-  margin: 40px 0;
+  margin: 20px  0;
   color:#34423D;
 `

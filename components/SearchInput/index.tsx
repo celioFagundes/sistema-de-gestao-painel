@@ -19,32 +19,34 @@ const SearchInput = (props: Props) => {
   const handleInputChange = (text: string) => {
     setInputValue(text)
   }
-  const resetSearch = () =>{
+  const resetSearch = () => {
     setInputValue('')
     props.onSubmit('')
   }
   return (
-    <Wrapper>
-      <Label htmlFor='search-input'>Pesquisar por</Label>
-      <Icon>
-        <Search />
-      </Icon>
-      <Input
-        onKeyDown={handleKeyDown}
-        onChange={evt => handleInputChange(evt.target.value)}
-        placeholder='Pesquise por nome ou número do documento'
-        value={inputValue}
-        id='search-input'
-      />
-      { props.querySlug !== '' &&(
+    <>
+      <Wrapper>
+        <Label htmlFor='search-input'>Pesquisar por</Label>
+        <Icon>
+          <Search />
+        </Icon>
+        <Input
+          onKeyDown={handleKeyDown}
+          onChange={evt => handleInputChange(evt.target.value)}
+          placeholder='Pesquise por nome ou número do documento'
+          value={inputValue}
+          id='search-input'
+        />
+      </Wrapper>
+      {props.querySlug !== '' && (
         <SearchResults>
           <p>Mostrando resultados para "{props.querySlug}"</p>
           <ResetSearchButton onClick={resetSearch}>
-            <AiOutlineClose size={18}/>
+            <AiOutlineClose size={18} />
           </ResetSearchButton>
         </SearchResults>
       )}
-    </Wrapper>
+    </>
   )
 }
 
