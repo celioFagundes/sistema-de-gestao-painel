@@ -116,7 +116,7 @@ const Agents: React.FC = ({}) => {
     setQueryOptions({ ...queryOptions, limit: queryOptions.limit + 10 })
   }
   const handleSearchInput = (value: string) => {
-    setQueryOptions({ ...queryOptions, slug: value.trim() })
+    setQueryOptions({ ...queryOptions, slug: value.trim(), page: 1 })
   }
   const handleSort = (value: string) =>{
     if(value === queryOptions.field){
