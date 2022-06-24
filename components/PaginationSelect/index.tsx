@@ -20,17 +20,11 @@ const PaginationSelect = (props: Props) => {
           value={props.limit}
           onChange={evt => props.onChange(Number(evt.target.value))}
         >
-          {selectOptions[0] <= props.totalDocs ? (
-            selectOptions.map(opt => (
-              <Option key={opt} value={opt} data-testid='pagination-select-option'>
-                {opt}
-              </Option>
-            ))
-          ) : (
-            <Option value={10} data-testid='pagination-select-option'>
-              10
+          {selectOptions.map(opt => (
+            <Option key={opt} value={opt} data-testid='pagination-select-option'>
+              {opt}
             </Option>
-          )}
+          ))}
         </Select>
       </Container>
     </Wrapper>
