@@ -36,6 +36,8 @@ import FilePlus from '../../components/Icons/FilePlus'
 import MoreVertical from '../../components/Icons/MoreVertical'
 import { fetcher } from '../../lib/fetcher'
 import useSWR from 'swr'
+import SortSelect from '../../components/SortSelect'
+import SortButton from '../../components/SortButton'
 
 interface Agent {
   _id: string
@@ -96,26 +98,32 @@ const Agents: React.FC = ({}) => {
   }, [data])
 
   const handleNextPage = () => {
-    if(data && data.results.hasNextPage){
+    if (data && data.results.hasNextPage) {
       let nextPage = queryOptions.page + 1
-      setQueryOptions({...queryOptions, page:nextPage})
+      setQueryOptions({ ...queryOptions, page: nextPage })
     }
-   
   }
   const handlePrevPage = () => {
-    if(data && data.results.hasPrevPage){
+    if (data && data.results.hasPrevPage) {
       let prevPage = queryOptions.page - 1
-      setQueryOptions({...queryOptions, page:prevPage})
+      setQueryOptions({ ...queryOptions, page: prevPage })
     }
   }
   const handleSelectLimit = (value: number) => {
-    setQueryOptions({...queryOptions, limit:value, page: 1})
+    setQueryOptions({ ...queryOptions, limit: value, page: 1 })
   }
   const handleLoadMore = () => {
-    setQueryOptions({...queryOptions, limit: queryOptions.limit + 10})
+    setQueryOptions({ ...queryOptions, limit: queryOptions.limit + 10 })
   }
-  const handleSearchInput = (value:string) => {
-    setQueryOptions({...queryOptions, slug: value})
+  const handleSearchInput = (value: string) => {
+    setQueryOptions({ ...queryOptions, slug: value })
+  }
+  const handleSort = (value: string) =>{
+    if(value === queryOptions.field){
+      let changeCriteria = queryOptions.criteria === 'asc' ? 'desc' : 'asc'
+      return setQueryOptions({...queryOptions, criteria : changeCriteria, page: 1})
+    }
+    setQueryOptions({...queryOptions, field: value, criteria :'asc', page: 1})
   }
 
   const updateActiveStatusList = (
@@ -166,25 +174,30 @@ const Agents: React.FC = ({}) => {
             closeFn={() => toggleCategoriesModal(false)}
             label={'Colaboradores'}
           />
-          <SearchInput onSubmit = {handleSearchInput} />
+          <SearchInput onSubmit={handleSearchInput} />
           <SectionTitle>Listagem de colaboradores</SectionTitle>
-          { (!data || data.results.docs.length < 1)  && 
-            <p>
-              Nenhum registro encontrado
-            </p>
-          
-          }
-          {(data && data.results.docs.length > 0) && (
+          {(!data || data.results.docs.length < 1) && <p>Nenhum registro encontrado</p>}
+          {data && data.results.docs.length > 0 && (
             <>
               <TableDrop>
                 <TableDrop.Header>
                   <TableDrop.Row numberOfColumns={7}>
-                    <TableDrop.Th gridSpan>Nome Completo</TableDrop.Th>
-                    <TableDrop.Th>Departamento</TableDrop.Th>
-                    <TableDrop.Th>Cargo</TableDrop.Th>
-                    <TableDrop.Th>Unidade</TableDrop.Th>
-                    <TableDrop.Th>Status</TableDrop.Th>
-                    <TableDrop.Th><button>Ordenar por:</button></TableDrop.Th>
+                    <TableDrop.Th gridSpan>
+                      <SortButton label='Nome completo' field='name' onClick={handleSort}/>
+                    </TableDrop.Th>
+                    <TableDrop.Th gridSpan>
+                      <SortButton label='Departamento' field='department' onClick={handleSort}/>
+                    </TableDrop.Th>
+                    <TableDrop.Th gridSpan>
+                      <SortButton label='Cargo' field='role' onClick={handleSort}/>
+                    </TableDrop.Th>
+                    <TableDrop.Th gridSpan>
+                      <SortButton label='Unidade' field='branch' onClick={handleSort}/>
+                    </TableDrop.Th>
+                    <TableDrop.Th gridSpan>
+                      <SortButton label='Status' field='status' onClick={handleSort}/>
+                    </TableDrop.Th>
+                    <TableDrop.Th></TableDrop.Th>
                   </TableDrop.Row>
                 </TableDrop.Header>
                 <TableDrop.Body>
