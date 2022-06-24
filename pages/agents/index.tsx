@@ -36,7 +36,7 @@ import FilePlus from '../../components/Icons/FilePlus'
 import MoreVertical from '../../components/Icons/MoreVertical'
 import { fetcher } from '../../lib/fetcher'
 import useSWR from 'swr'
-import SortSelect from '../../components/SortSelect'
+import MobileSortSelect from '../../components/MobileSortSelect'
 import SortButton from '../../components/SortButton'
 
 interface Agent {
@@ -83,6 +83,7 @@ const Agents: React.FC = ({}) => {
   const [modalIsOpenList, setModalIsOpenList] = useState<IsOpenList>({})
   const [dropdownIsOpenList, setDropdownIsOpenList] = useState<IsOpenList>({})
   const [modalCategoriesIsOpen, setModalCategoriesIsOpen] = useState(false)
+  const [modalMobileSort, setModalMobileSort] = useState(true)
 
   useEffect(() => {
     const createActiveStatusList = () => {
@@ -118,12 +119,15 @@ const Agents: React.FC = ({}) => {
   const handleSearchInput = (value: string) => {
     setQueryOptions({ ...queryOptions, slug: value.trim(), page: 1 })
   }
-  const handleSort = (value: string) =>{
-    if(value === queryOptions.field){
+  const handleSort = (value: string) => {
+    if (value === queryOptions.field) {
       let changeCriteria = queryOptions.criteria === 'asc' ? 'desc' : 'asc'
-      return setQueryOptions({...queryOptions, criteria : changeCriteria, page: 1})
+      return setQueryOptions({ ...queryOptions, criteria: changeCriteria, page: 1 })
     }
-    setQueryOptions({...queryOptions, field: value, criteria :'asc', page: 1})
+    setQueryOptions({ ...queryOptions, field: value, criteria: 'asc', page: 1 })
+  }
+  const handleMobileSort = (field: string, criteria: string) => {
+    setQueryOptions({ ...queryOptions, field: field, criteria: criteria, page: 1 })
   }
 
   const updateActiveStatusList = (
@@ -148,6 +152,9 @@ const Agents: React.FC = ({}) => {
   }
   const toggleCategoriesModal = (state: boolean) => {
     setModalCategoriesIsOpen(state)
+  }
+  const toggleMobileSortModal = (state: boolean) => {
+    setModalMobileSort(state)
   }
   const closeAnyActiveOptionsModal = () => {
     let newList = { ...modalIsOpenList }
@@ -174,7 +181,53 @@ const Agents: React.FC = ({}) => {
             closeFn={() => toggleCategoriesModal(false)}
             label={'Colaboradores'}
           />
-          <SearchInput onSubmit={handleSearchInput} querySlug = {queryOptions.slug}/>
+          <MobileSortSelect
+            isOpen={modalMobileSort}
+            openFn={() => toggleMobileSortModal(true)}
+            closeFn={() => toggleMobileSortModal(false)}
+          >
+            <MobileSortSelect.Option
+              applySortFn={handleMobileSort}
+              value='name'
+              selectedField={queryOptions.field}
+              selectedCriteria={queryOptions.criteria}
+            >
+              Nome completo{' '}
+            </MobileSortSelect.Option>
+            <MobileSortSelect.Option
+              applySortFn={handleMobileSort}
+              value='department'
+              selectedField={queryOptions.field}
+              selectedCriteria={queryOptions.criteria}
+            >
+              Departamento
+            </MobileSortSelect.Option>
+            <MobileSortSelect.Option
+              applySortFn={handleMobileSort}
+              value='role'
+              selectedField={queryOptions.field}
+              selectedCriteria={queryOptions.criteria}
+            >
+              Cargo
+            </MobileSortSelect.Option>
+            <MobileSortSelect.Option
+              applySortFn={handleMobileSort}
+              value='branch'
+              selectedField={queryOptions.field}
+              selectedCriteria={queryOptions.criteria}
+            >
+              Unidade
+            </MobileSortSelect.Option>
+            <MobileSortSelect.Option
+              applySortFn={handleMobileSort}
+              value='status'
+              selectedField={queryOptions.field}
+              selectedCriteria={queryOptions.criteria}
+            >
+              Status
+            </MobileSortSelect.Option>
+          </MobileSortSelect>
+          <SearchInput onSubmit={handleSearchInput} querySlug={queryOptions.slug} />
           <SectionTitle>Listagem de colaboradores</SectionTitle>
           {(!data || data.results.docs.length < 1) && <p>Nenhum registro encontrado</p>}
           {data && data.results.docs.length > 0 && (
@@ -183,19 +236,19 @@ const Agents: React.FC = ({}) => {
                 <TableDrop.Header>
                   <TableDrop.Row numberOfColumns={7}>
                     <TableDrop.Th gridSpan>
-                      <SortButton label='Nome completo' field='name' onClick={handleSort}/>
+                      <SortButton label='Nome completo' field='name' onClick={handleSort} />
                     </TableDrop.Th>
                     <TableDrop.Th gridSpan>
-                      <SortButton label='Departamento' field='department' onClick={handleSort}/>
+                      <SortButton label='Departamento' field='department' onClick={handleSort} />
                     </TableDrop.Th>
                     <TableDrop.Th gridSpan>
-                      <SortButton label='Cargo' field='role' onClick={handleSort}/>
+                      <SortButton label='Cargo' field='role' onClick={handleSort} />
                     </TableDrop.Th>
                     <TableDrop.Th gridSpan>
-                      <SortButton label='Unidade' field='branch' onClick={handleSort}/>
+                      <SortButton label='Unidade' field='branch' onClick={handleSort} />
                     </TableDrop.Th>
                     <TableDrop.Th gridSpan>
-                      <SortButton label='Status' field='status' onClick={handleSort}/>
+                      <SortButton label='Status' field='status' onClick={handleSort} />
                     </TableDrop.Th>
                     <TableDrop.Th></TableDrop.Th>
                   </TableDrop.Row>

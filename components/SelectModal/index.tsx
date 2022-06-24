@@ -9,7 +9,7 @@ import {
   ModalHeader,
   ModalLabel,
   Modal,
-  Container,
+  ToggleContainer,
   ModalBackground,
 } from './styles'
 
@@ -23,12 +23,12 @@ type Props = {
 const SelectModal = (props: Props) => {
   return (
     <Wrapper>
-      <Container onClick={props.openFn}>
+      <ToggleContainer onClick={props.openFn}>
         <Label data-testid='label'>{props.label}</Label>
         <Icon>
           <MoreVertical />
         </Icon>
-      </Container>
+      </ToggleContainer>
       <>
         <ModalBackground
           isOpen={props.isOpen}

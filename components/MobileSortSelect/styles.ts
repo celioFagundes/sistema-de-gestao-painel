@@ -4,6 +4,9 @@ import { BoldText, NormalText } from '../../styles/texts'
 type IsOpen = {
   isOpen: boolean
 }
+type isChecked = {
+  isChecked: boolean
+}
 export const Wrapper = styled.div`
   position: relative;
   @media (min-width: 768px) {
@@ -27,7 +30,8 @@ export const Label = styled(NormalText)`
   font-size: 14px;
 `
 export const Icon = styled.div`
-cursor:pointer;`
+  cursor: pointer;
+`
 export const Modal = styled.div<IsOpen>`
   position: fixed;
   left: 4%;
@@ -63,16 +67,23 @@ export const ModalLabel = styled(BoldText)`
   margin-bottom: 35px;
 `
 export const ModalOption = styled.div`
-  padding-left: 8px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
   margin-bottom: 17px;
-
-  &:hover {
-    cursor: pointer;
-  }
+  padding-left: 8px;
+  cursor: pointer;
+  
 `
-export const ModalOptionLink = styled.a`
-  font-style: normal;
-  font-weight: 500;
-  font-size: 16px;
-  color: #587169;
+export const OptionLabel = styled.div`
+  margin-left:5px;
+`
+export const CheckOption = styled.button<isChecked>`
+  height: 20px;
+  width: 20px;
+  border: 3px solid #abe0ce;
+  border-radius: 50%;
+  background-color: ${props => props.isChecked ? "#22e0a1" : '#fff'};
+  cursor: pointer;
+  margin: 0 10px;
 `
