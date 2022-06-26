@@ -11,6 +11,8 @@ import Pagination from '../../components/Pagination'
 import SelectModal from '../../components/SelectModal'
 import Tabs from '../../components/Tabs'
 import ModalOptions from '../../components/ModalOptions'
+import SortSelect from '../../components/SortSelect'
+import SortButton from '../../components/SortButton'
 
 import {
   ActionLabel,
@@ -36,9 +38,15 @@ import FilePlus from '../../components/Icons/FilePlus'
 import MoreVertical from '../../components/Icons/MoreVertical'
 import { fetcher } from '../../lib/fetcher'
 import useSWR from 'swr'
-import MobileSortSelect from '../../components/MobileSortSelect'
-import SortButton from '../../components/SortButton'
 
+const sortOptions = [
+  {name: 'Nome completo', value: 'name'},
+  {name: 'Departamento', value: 'department'},
+  {name: 'Cargo', value: 'role'},
+  {name: 'Unidade', value: 'branch'},
+  {name: 'Status', value: 'status'},
+  
+]
 interface Agent {
   _id: string
   name: string
@@ -126,7 +134,7 @@ const Agents: React.FC = ({}) => {
     }
     setQueryOptions({ ...queryOptions, field: value, criteria: 'asc', page: 1 })
   }
-  const handleMobileSort = (field: string, criteria: string) => {
+  const handleSortSelect = (field: string, criteria: string) => {
     setQueryOptions({ ...queryOptions, field: field, criteria: criteria, page: 1 })
   }
 
@@ -181,52 +189,16 @@ const Agents: React.FC = ({}) => {
             closeFn={() => toggleCategoriesModal(false)}
             label={'Colaboradores'}
           />
-          <MobileSortSelect
+          <SortSelect
             isOpen={modalMobileSort}
             openFn={() => toggleMobileSortModal(true)}
             closeFn={() => toggleMobileSortModal(false)}
+            options= {sortOptions}
+            applySortFn = {handleSortSelect}
+            selectedCriteria={ queryOptions.criteria}
+            selectedField={ queryOptions.field}
           >
-            <MobileSortSelect.Option
-              applySortFn={handleMobileSort}
-              value='name'
-              selectedField={queryOptions.field}
-              selectedCriteria={queryOptions.criteria}
-            >
-              Nome completo{' '}
-            </MobileSortSelect.Option>
-            <MobileSortSelect.Option
-              applySortFn={handleMobileSort}
-              value='department'
-              selectedField={queryOptions.field}
-              selectedCriteria={queryOptions.criteria}
-            >
-              Departamento
-            </MobileSortSelect.Option>
-            <MobileSortSelect.Option
-              applySortFn={handleMobileSort}
-              value='role'
-              selectedField={queryOptions.field}
-              selectedCriteria={queryOptions.criteria}
-            >
-              Cargo
-            </MobileSortSelect.Option>
-            <MobileSortSelect.Option
-              applySortFn={handleMobileSort}
-              value='branch'
-              selectedField={queryOptions.field}
-              selectedCriteria={queryOptions.criteria}
-            >
-              Unidade
-            </MobileSortSelect.Option>
-            <MobileSortSelect.Option
-              applySortFn={handleMobileSort}
-              value='status'
-              selectedField={queryOptions.field}
-              selectedCriteria={queryOptions.criteria}
-            >
-              Status
-            </MobileSortSelect.Option>
-          </MobileSortSelect>
+          </SortSelect>
           <SearchInput onSubmit={handleSearchInput} querySlug={queryOptions.slug} />
           <SectionTitle>Listagem de colaboradores</SectionTitle>
           {(!data || data.results.docs.length < 1) && <p>Nenhum registro encontrado</p>}

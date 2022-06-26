@@ -12,14 +12,22 @@ import {
   ModalBackground,
 } from './styles'
 
+type OptionProps = {
+  name: string
+  value: string
+}
 type Props = {
   closeFn: () => void
   openFn: () => void
   isOpen: boolean
   children: React.ReactNode
+  options: OptionProps[]
+  applySortFn: (field: string, criteria: string) => void
+  selectedField: string
+  selectedCriteria: string
 }
 
-const MobileSortSelect = (props: Props) => {
+const SortSelect = (props: Props) => {
   return (
     <Wrapper>
       <ToggleContainer onClick={props.openFn}>
@@ -41,12 +49,19 @@ const MobileSortSelect = (props: Props) => {
               <CloseX />
             </Icon>
           </ModalHeader>
-          {props.children}
+          {props.options.map(opt => (
+            <Option
+              name={opt.name}
+              value={opt.value}
+              applySortFn={props.applySortFn}
+              selectedCriteria={props.selectedCriteria}
+              selectedField={props.selectedField}
+            />
+          ))}
         </Modal>
       </>
     </Wrapper>
   )
 }
 
-MobileSortSelect.Option = Option
-export default MobileSortSelect
+export default SortSelect

@@ -2,7 +2,7 @@ import { CheckToggle, Name, Order, OrderLabel, OrdersContainer, Wrapper } from '
 
 type OptionProps = {
   value: string
-  children: React.ReactNode
+  name: string
   selectedField: string
   selectedCriteria: string
   applySortFn: (field: string, criteria: string) => void
@@ -11,7 +11,7 @@ type OptionProps = {
 const Option = (props: OptionProps) => {
   return (
     <Wrapper>
-      <Name>{props.children}</Name>
+      <Name>{props.name}</Name>
       <OrdersContainer>
         <Order>
           <CheckToggle
