@@ -66,24 +66,4 @@ export const ModalLabel = styled(BoldText)`
   color: #34423d;
   margin-bottom: 35px;
 `
-export const ModalOption = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin-bottom: 17px;
-  padding-left: 8px;
-  cursor: pointer;
-  
-`
-export const OptionLabel = styled.div`
-  margin-left:5px;
-`
-export const CheckOption = styled.button<isChecked>`
-  height: 20px;
-  width: 20px;
-  border: 3px solid #abe0ce;
-  border-radius: 50%;
-  background-color: ${props => props.isChecked ? "#22e0a1" : '#fff'};
-  cursor: pointer;
-  margin: 0 10px;
-`
+
