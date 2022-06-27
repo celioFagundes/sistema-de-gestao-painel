@@ -19,4 +19,4 @@ const Duplicate: React.FC = (props: Props) => {
   )
 }
 
-export default Duplicate
+export { Duplicate }

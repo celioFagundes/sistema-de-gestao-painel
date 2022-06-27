@@ -3,11 +3,11 @@ import Seo from '../../components/Seo'
 
 import TableDrop from '../../components/TableToDropdown'
 import Layout from '../../components/Layout'
-import ModalOptions from '../../components/ModalOptions'
+import ActionsModal from '../../components/ActionsModal'
 import SearchInput from '../../components/SearchInput'
 import Pagination from '../../components/Pagination'
-import SelectModal from '../../components/SelectModal'
-import Tabs from '../../components/Tabs'
+import NavigationSelect from '../../components/NavigationSelect'
+import NavigationTabs from '../../components/NavigationTabs'
 import {
   ActionLabel,
   DropdownIcon,
@@ -98,20 +98,20 @@ const Roles: React.FC = () => {
         <PageTitle>Organização</PageTitle>
         <button onClick = {() => upload()}>teste</button>
         <Content>
-          <Tabs>
-            <Tabs.Tab url='/agents' isActive={false}>
+          <NavigationTabs>
+            <NavigationTabs.Tab url='/agents' isActive={false}>
               Colaboradores
-            </Tabs.Tab>
-            <Tabs.Tab url='/roles' isActive={true}>
+            </NavigationTabs.Tab>
+            <NavigationTabs.Tab url='/roles' isActive={true}>
               Cargos
-            </Tabs.Tab>
-          </Tabs>
+            </NavigationTabs.Tab>
+          </NavigationTabs>
 
-          <SelectModal
+          <NavigationSelect
             isOpen={modalCategoriesIsOpen}
             openFn={() => toggleCategoriesModal(true)}
             closeFn={() => toggleCategoriesModal(false)}
-            label={'Cargos'}
+            currentPage={'Cargos'}
           />
           <SearchInput />
           <SectionTitle>Listagem de cargos</SectionTitle>
@@ -158,23 +158,23 @@ const Roles: React.FC = () => {
                         <FilePlus />
                         <ActionLabel>Ações</ActionLabel>
                       </ActionsContainer>
-                      <ModalOptions
+                      <ActionsModal
                         isOpen={modalIsOpenList[role.name + role.departament]}
                         closeFn={closeAnyActiveOptionsModal}
                       >
-                        <ModalOptions.Option url={'/roles/1'} isActive={true} icon={Eye}>
+                        <ActionsModal.Action url={'/roles/1'} isActive={true} icon={Eye}>
                           Ver cargo
-                        </ModalOptions.Option>
-                        <ModalOptions.Option url={'/roles/1'} isActive={false} icon={Edit}>
+                        </ActionsModal.Action>
+                        <ActionsModal.Action url={'/roles/1'} isActive={false} icon={Edit}>
                           Editar
-                        </ModalOptions.Option>
-                        <ModalOptions.Option url={'/cargos/1'} isActive={false} icon={Duplicate}>
+                        </ActionsModal.Action>
+                        <ActionsModal.Action url={'/cargos/1'} isActive={false} icon={Duplicate}>
                           Duplicar
-                        </ModalOptions.Option>
-                        <ModalOptions.Option url={'/roles/1'} isActive={false} icon={Repeat}>
+                        </ActionsModal.Action>
+                        <ActionsModal.Action url={'/roles/1'} isActive={false} icon={Repeat}>
                           Excluir
-                        </ModalOptions.Option>
-                      </ModalOptions>
+                        </ActionsModal.Action>
+                      </ActionsModal>
                     </TableDrop.Td>
                   </TableDrop.Row>
                 ))}

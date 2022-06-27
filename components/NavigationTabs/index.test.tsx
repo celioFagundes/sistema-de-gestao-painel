@@ -1,15 +1,15 @@
 import { render, screen } from '@testing-library/react'
-import Tabs from './index'
+import NavigationTabs from './index'
 import { matchers } from '@emotion/jest'
 expect.extend(matchers)
 
 describe('Tabs', () => {
   it('renders the tabs with the correct styles', () => {
     render(
-      <Tabs >
-        <Tabs.Tab url = {'/agents'} isActive = {true}>Colaboradores</Tabs.Tab>
-        <Tabs.Tab url = {'/roles'} isActive = {false}>Roles</Tabs.Tab>
-      </Tabs>
+      <NavigationTabs >
+        <NavigationTabs.Tab url = {'/agents'} isActive = {true}>Colaboradores</NavigationTabs.Tab>
+        <NavigationTabs.Tab url = {'/roles'} isActive = {false}>Roles</NavigationTabs.Tab>
+      </NavigationTabs>
     )
     const tabs: HTMLElement[] = screen.getAllByTestId('tab')
 

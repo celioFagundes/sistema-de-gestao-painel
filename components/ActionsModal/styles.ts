@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { BoldText } from '../../styles/texts'
 
 type IsActive = {
   isActive: boolean
@@ -8,7 +9,7 @@ type IsOpen = {
   isOpen?: boolean
 }
 
-export const ModalMenu = styled.div<IsOpen>`
+export const Content = styled.div<IsOpen>`
   position: absolute;
   display: ${props => (props.isOpen ? 'block ' : 'none')};
   min-width: 340px;
@@ -43,7 +44,7 @@ export const ModalBackground = styled.div<IsOpen>`
   z-index: 4000;
 `
 
-export const ModalOption = styled.div<IsActive>`
+export const ActionContainer = styled.div<IsActive>`
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -59,7 +60,7 @@ export const ModalOption = styled.div<IsActive>`
   }
   
 `
-export const ModalOptionIcon = styled.div`
+export const ActionIcon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -67,11 +68,27 @@ export const ModalOptionIcon = styled.div`
   
   
 `
-export const ModalOptionLink = styled.a<IsActive>`
+export const ActionLink = styled.a<IsActive>`
   width: 140px;
   color: ${props => (props.isActive ? '#587169' : '#A3B8B0')};
   font-style: normal;
   font-weight: 500;
   font-size: 16px;
   margin-left: 16px;
+`
+export const ToggleWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 14px 24px;
+  border: 2px solid #b5f1dd;
+  border-radius: 8px;
+  @media (min-width: 768px) {
+    display: none;
+  }
+`
+export const ToggleLabel = styled(BoldText)`
+  color: #34423d;
+  margin-left: 8px;
 `

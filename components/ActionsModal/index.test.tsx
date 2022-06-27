@@ -1,5 +1,5 @@
 import {  render, screen } from '@testing-library/react'
-import ModalOptions from './index'
+import ActionsModal from './index'
 import Eye from '../Icons/Eye'
 import Trash from '../Icons/Trash'
 import { matchers } from '@emotion/jest'
@@ -7,14 +7,14 @@ expect.extend(matchers)
 describe('ModalOptions', () => {
   it('renders the modal options with corrent styles', () => {
     render(
-      <ModalOptions isOpen={true} closeFn={jest.fn()}>
-        <ModalOptions.Option url={'/agents/1'} isActive={true} icon={Eye}>
+      <ActionsModal isOpen={true} closeFn={jest.fn()}>
+        <ActionsModal.Action url={'/agents/1'} isActive={true} icon={Eye}>
           Ver colaborador
-        </ModalOptions.Option>
-        <ModalOptions.Option url={'/agents/1'} isActive={false} icon={Trash}>
+        </ActionsModal.Action>
+        <ActionsModal.Action url={'/agents/1'} isActive={false} icon={Trash}>
           Excluir
-        </ModalOptions.Option>
-      </ModalOptions>
+        </ActionsModal.Action>
+      </ActionsModal>
     )
     const modal = screen.getByTestId('modal-options')
     const modalBackground = screen.getByTestId('modal-options-background')
@@ -38,14 +38,14 @@ describe('ModalOptions', () => {
   })
   it('renders the modal options opened', () => {
     render(
-      <ModalOptions isOpen={true} closeFn={jest.fn()}>
-        <ModalOptions.Option url={'/agents/1'} isActive={true} icon={Eye}>
+      <ActionsModal isOpen={true} closeFn={jest.fn()}>
+        <ActionsModal.Action url={'/agents/1'} isActive={true} icon={Eye}>
           Ver colaborador
-        </ModalOptions.Option>
-        <ModalOptions.Option url={'/agents/1'} isActive={false} icon={Trash}>
+        </ActionsModal.Action>
+        <ActionsModal.Action url={'/agents/1'} isActive={false} icon={Trash}>
           Excluir
-        </ModalOptions.Option>
-      </ModalOptions>
+        </ActionsModal.Action>
+      </ActionsModal>
     )
     const modal = screen.getByTestId('modal-options')
     const modalBackground = screen.getByTestId('modal-options-background')
@@ -59,14 +59,14 @@ describe('ModalOptions', () => {
   })
   it('renders the modal options closed', () => {
     render(
-      <ModalOptions isOpen={false} closeFn={jest.fn()}>
-        <ModalOptions.Option url={'/agents/1'} isActive={true} icon={Eye}>
+      <ActionsModal isOpen={false} closeFn={jest.fn()}>
+        <ActionsModal.Action url={'/agents/1'} isActive={true} icon={Eye}>
           Ver colaborador
-        </ModalOptions.Option>
-        <ModalOptions.Option url={'/agents/1'} isActive={false} icon={Trash}>
+        </ActionsModal.Action>
+        <ActionsModal.Action url={'/agents/1'} isActive={false} icon={Trash}>
           Excluir
-        </ModalOptions.Option>
-      </ModalOptions>
+        </ActionsModal.Action>
+      </ActionsModal>
     )
     const modal = screen.getByTestId('modal-options')
     const modalBackground = screen.getByTestId('modal-options-background')

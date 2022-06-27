@@ -1,6 +1,4 @@
-import Left from '../Icons/Left'
-import Refresh from '../Icons/Refresh'
-import Right from '../Icons/Right'
+import { Left, Refresh, Right } from '../Icons'
 import {
   MobilePagination,
   MobilePaginationLabel,

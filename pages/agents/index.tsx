@@ -1,27 +1,21 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import useSWR from 'swr'
 import Image from 'next/image'
-import Seo from '../../components/Seo'
-import Eye from '../../components/Icons/Eye'
+import { Eye, Down, MoreVertical,Trash ,Up} from '../../components/Icons'
 
+import Seo from '../../components/Seo'
 import Layout from '../../components/Layout'
 import TableDrop from '../../components/TableToDropdown'
 import SearchInput from '../../components/SearchInput'
 import PaginationSelect from '../../components/PaginationSelect'
 import Pagination from '../../components/Pagination'
-import SelectModal from '../../components/SelectModal'
-import Tabs from '../../components/Tabs'
-import ModalOptions from '../../components/ModalOptions'
+import NavigationSelect from '../../components/NavigationSelect'
+import NavigationTabs from '../../components/NavigationTabs'
+import ActionsModal, { Action, MobileActionsToggle } from '../../components/ActionsModal'
 import SortSelect from '../../components/SortSelect'
 import SortButton from '../../components/SortButton'
 
-import {
-  ActionLabel,
-  DropdownIcon,
-  Value,
-  Label,
-  ActionsContainer,
-  DotsIcon,
-} from '../../components/TableToDropdown/styles'
+import { DropdownIcon, Value, Label, DotsIcon } from '../../components/TableToDropdown/styles'
 import {
   AvatarNameContainer,
   ImageWrapper,
@@ -31,21 +25,16 @@ import {
   Content,
 } from '../../styles/agents'
 import { PageTitle, SectionTitle } from '../../styles/texts'
-import Trash from '../../components/Icons/Trash'
-import Down from '../../components/Icons/Down'
-import Up from '../../components/Icons/Up'
-import FilePlus from '../../components/Icons/FilePlus'
-import MoreVertical from '../../components/Icons/MoreVertical'
 import { fetcher } from '../../lib/fetcher'
-import useSWR from 'swr'
 
-const sortOptions = [
-  {name: 'Nome completo', value: 'name'},
-  {name: 'Departamento', value: 'department'},
-  {name: 'Cargo', value: 'role'},
-  {name: 'Unidade', value: 'branch'},
-  {name: 'Status', value: 'status'},
-  
+
+
+const SORT_OPTIONS = [
+  { name: 'Nome completo', value: 'name' },
+  { name: 'Departamento', value: 'department' },
+  { name: 'Cargo', value: 'role' },
+  { name: 'Unidade', value: 'branch' },
+  { name: 'Status', value: 'status' },
 ]
 interface Agent {
   _id: string
@@ -90,7 +79,7 @@ const Agents: React.FC = ({}) => {
   )
   const [modalIsOpenList, setModalIsOpenList] = useState<IsOpenList>({})
   const [dropdownIsOpenList, setDropdownIsOpenList] = useState<IsOpenList>({})
-  const [modalCategoriesIsOpen, setModalCategoriesIsOpen] = useState(false)
+  const [modalNavigationIsOpen, setModalCategoriesIsOpen] = useState(false)
   const [modalMobileSort, setModalMobileSort] = useState(false)
 
   useEffect(() => {
@@ -127,7 +116,7 @@ const Agents: React.FC = ({}) => {
   const handleSearchInput = (value: string) => {
     setQueryOptions({ ...queryOptions, slug: value.trim(), page: 1 })
   }
-  const handleSort = (value: string) => {
+  const handleSortButton = (value: string) => {
     if (value === queryOptions.field) {
       let changeCriteria = queryOptions.criteria === 'asc' ? 'desc' : 'asc'
       return setQueryOptions({ ...queryOptions, criteria: changeCriteria, page: 1 })
@@ -158,10 +147,10 @@ const Agents: React.FC = ({}) => {
   const toggleDropdown = (_id: string) => {
     updateActiveStatusList(_id, dropdownIsOpenList, setDropdownIsOpenList)
   }
-  const toggleCategoriesModal = (state: boolean) => {
+  const toggleNavigationModal = (state: boolean) => {
     setModalCategoriesIsOpen(state)
   }
-  const toggleMobileSortModal = (state: boolean) => {
+  const toggleSortSelectModal = (state: boolean) => {
     setModalMobileSort(state)
   }
   const closeAnyActiveOptionsModal = () => {
@@ -175,30 +164,30 @@ const Agents: React.FC = ({}) => {
       <Layout>
         <PageTitle>Organização</PageTitle>
         <Content>
-          <Tabs>
-            <Tabs.Tab url='/agents' isActive={true}>
+          <NavigationTabs>
+            <NavigationTabs.Tab url='/agents' isActive={true}>
               Colaboradores
-            </Tabs.Tab>
-            <Tabs.Tab url='/roles' isActive={false}>
+            </NavigationTabs.Tab>
+            <NavigationTabs.Tab url='/roles' isActive={false}>
               Cargos
-            </Tabs.Tab>
-          </Tabs>
-          <SelectModal
-            isOpen={modalCategoriesIsOpen}
-            openFn={() => toggleCategoriesModal(true)}
-            closeFn={() => toggleCategoriesModal(false)}
-            label={'Colaboradores'}
+            </NavigationTabs.Tab>
+          </NavigationTabs>
+          <NavigationSelect
+            isOpen={modalNavigationIsOpen}
+            openFn={() => toggleNavigationModal(true)}
+            closeFn={() => toggleNavigationModal(false)}
+            currentPage={'Colaboradores'}
           />
           <SearchInput onSubmit={handleSearchInput} querySlug={queryOptions.slug} />
           <SectionTitle>Listagem de colaboradores</SectionTitle>
           <SortSelect
             isOpen={modalMobileSort}
-            openFn={() => toggleMobileSortModal(true)}
-            closeFn={() => toggleMobileSortModal(false)}
-            options= {sortOptions}
-            applySortFn = {handleSortSelect}
-            selectedCriteria={ queryOptions.criteria}
-            selectedField={ queryOptions.field}
+            openFn={() => toggleSortSelectModal(true)}
+            closeFn={() => toggleSortSelectModal(false)}
+            options={SORT_OPTIONS}
+            applySortFn={handleSortSelect}
+            selectedCriteria={queryOptions.criteria}
+            selectedField={queryOptions.field}
           />
           {(!data || data.results.docs.length < 1) && <p>Nenhum registro encontrado</p>}
           {data && data.results.docs.length > 0 && (
@@ -207,19 +196,44 @@ const Agents: React.FC = ({}) => {
                 <TableDrop.Header>
                   <TableDrop.Row numberOfColumns={7}>
                     <TableDrop.Th gridSpan>
-                      <SortButton label='Nome completo' field='name' onClick={handleSort} />
+                      <SortButton
+                        label='Nome completo'
+                        field='name'
+                        onClick={handleSortButton}
+                        selectedCriteria={queryOptions.criteria}
+                      />
                     </TableDrop.Th>
                     <TableDrop.Th gridSpan>
-                      <SortButton label='Departamento' field='department' onClick={handleSort} />
+                      <SortButton
+                        label='Departamento'
+                        field='department'
+                        onClick={handleSortButton}
+                        selectedCriteria={queryOptions.criteria}
+                      />
                     </TableDrop.Th>
                     <TableDrop.Th gridSpan>
-                      <SortButton label='Cargo' field='role' onClick={handleSort} />
+                      <SortButton
+                        label='Cargo'
+                        field='role'
+                        onClick={handleSortButton}
+                        selectedCriteria={queryOptions.criteria}
+                      />
                     </TableDrop.Th>
                     <TableDrop.Th gridSpan>
-                      <SortButton label='Unidade' field='branch' onClick={handleSort} />
+                      <SortButton
+                        label='Unidade'
+                        field='branch'
+                        onClick={handleSortButton}
+                        selectedCriteria={queryOptions.criteria}
+                      />
                     </TableDrop.Th>
                     <TableDrop.Th gridSpan>
-                      <SortButton label='Status' field='status' onClick={handleSort} />
+                      <SortButton
+                        label='Status'
+                        field='status'
+                        onClick={handleSortButton}
+                        selectedCriteria={queryOptions.criteria}
+                      />
                     </TableDrop.Th>
                     <TableDrop.Th></TableDrop.Th>
                   </TableDrop.Row>
@@ -245,7 +259,6 @@ const Agents: React.FC = ({}) => {
                           {!dropdownIsOpenList[agent._id] ? <Down /> : <Up />}
                         </DropdownIcon>
                       </TableDrop.Td>
-
                       <TableDrop.Td>
                         <Label>Departamento</Label>
                         <Value>{agent.department}</Value>
@@ -269,21 +282,18 @@ const Agents: React.FC = ({}) => {
                         <DotsIcon onClick={() => toggleOptionsModal(agent._id)}>
                           <MoreVertical />
                         </DotsIcon>
-                        <ModalOptions
+                        <ActionsModal
                           isOpen={modalIsOpenList[agent._id]}
                           closeFn={closeAnyActiveOptionsModal}
                         >
-                          <ModalOptions.Option url={'/agents/1'} isActive={true} icon={Eye}>
+                          <Action url={'/agents/1'} isActive={true} icon={Eye}>
                             Ver colaborador
-                          </ModalOptions.Option>
-                          <ModalOptions.Option url={'/agents/1'} isActive={false} icon={Trash}>
+                          </Action>
+                          <Action url={'/agents/1'} isActive={false} icon={Trash}>
                             Excluir
-                          </ModalOptions.Option>
-                        </ModalOptions>
-                        <ActionsContainer onClick={() => toggleOptionsModal(agent._id)}>
-                          <FilePlus />
-                          <ActionLabel>Ações</ActionLabel>
-                        </ActionsContainer>
+                          </Action>
+                        </ActionsModal>
+                        <MobileActionsToggle onClick={() => toggleOptionsModal(agent._id)} />
                       </TableDrop.Td>
                     </TableDrop.Row>
                   ))}

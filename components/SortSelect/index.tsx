@@ -1,5 +1,5 @@
 import { AiOutlineSortAscending, AiOutlineSortDescending } from 'react-icons/ai'
-import CloseX from '../Icons/CloseX'
+import {CloseX }from '../Icons/'
 import Option from './option'
 import {
   Wrapper,
@@ -9,7 +9,6 @@ import {
   ModalHeader,
   ModalLabel,
   Modal,
-
   ModalBackground,
 } from './styles'
 

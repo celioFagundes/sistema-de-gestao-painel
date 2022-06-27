@@ -38,4 +38,4 @@ const Repeat: React.FC = (props: Props) => {
   )
 }
 
-export default Repeat
+export { Repeat}

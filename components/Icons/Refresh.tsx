@@ -1,6 +1,6 @@
 type Props = {}
 
-const Refresh:React.FC = (props: Props) => {
+const Refresh: React.FC = (props: Props) => {
   return (
     <svg width='25' height='24' viewBox='0 0 25 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <g clipPath='url(#clip0_6372_163)'>
@@ -33,4 +33,4 @@ const Refresh:React.FC = (props: Props) => {
   )
 }
 
-export default Refresh
+export { Refresh }

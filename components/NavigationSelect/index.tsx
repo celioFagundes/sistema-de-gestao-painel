@@ -1,6 +1,5 @@
 import Link from 'next/link'
-import CloseX from '../Icons/CloseX'
-import MoreVertical from '../Icons/MoreVertical'
+import { CloseX, MoreVertical } from '../Icons'
 import {
   Wrapper,
   Label,
@@ -16,15 +15,15 @@ import {
 type Props = {
   closeFn: () => void
   openFn: () => void
-  label: string
+  currentPage: string
   isOpen: boolean
 }
 
-const SelectModal = (props: Props) => {
+const NavigationSelect = (props: Props) => {
   return (
     <Wrapper>
       <ToggleContainer onClick={props.openFn}>
-        <Label data-testid='label'>{props.label}</Label>
+        <Label data-testid='label'>{props.currentPage}</Label>
         <Icon>
           <MoreVertical />
         </Icon>
@@ -54,4 +53,4 @@ const SelectModal = (props: Props) => {
   )
 }
 
-export default SelectModal
+export default NavigationSelect

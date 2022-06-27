@@ -17,4 +17,4 @@ const CheckboxOff: React.FC = (props: Props) => {
   )
 }
 
-export default CheckboxOff
+export { CheckboxOff }

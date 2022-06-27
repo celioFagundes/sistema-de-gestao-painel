@@ -19,4 +19,4 @@ const Edit: React.FC = (props: Props) => {
   )
 }
 
-export default Edit
+export { Edit }

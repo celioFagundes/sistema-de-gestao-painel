@@ -1,6 +1,6 @@
 type Props = {}
 
-const User:React.FC = (props: Props) => {
+const User: React.FC = (props: Props) => {
   return (
     <svg width='38' height='38' viewBox='0 0 38 38' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <path
@@ -19,4 +19,4 @@ const User:React.FC = (props: Props) => {
   )
 }
 
-export default User
+export { User }

@@ -13,4 +13,4 @@ const Down:React.FC = (props: Props) => {
   )
 }
 
-export default Down
+export { Down}

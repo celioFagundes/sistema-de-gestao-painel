@@ -23,7 +23,7 @@ import { PageTitle, SectionTitle } from '../../../styles/texts'
 import User from '../../../components/Icons/User'
 import ID from '../../../components/Icons/ID'
 import Phone from '../../../components/Icons/Phone'
-import Calendar from '../../../components/Icons/Calender;'
+import Calendar from '../../../components/Icons/Calender'
 import useSWR from 'swr'
 import { fetcher } from '../../../lib/fetcher'
 

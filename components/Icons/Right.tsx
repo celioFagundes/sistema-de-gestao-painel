@@ -20,4 +20,4 @@ const Right: React.FC = (props: Props) => {
   )
 }
 
-export default Right
+export { Right }

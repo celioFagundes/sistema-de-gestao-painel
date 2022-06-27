@@ -11,7 +11,7 @@ interface TabProps {
   isActive: boolean
 }
 
-const Tabs = (props: ContainerProps) => {
+const NavigationTabs = (props: ContainerProps) => {
   return <Container>{props.children}</Container>
 }
 const Tab: React.FC<TabProps> = ({ url, children, isActive }) => {
@@ -22,6 +22,6 @@ const Tab: React.FC<TabProps> = ({ url, children, isActive }) => {
   )
 }
 
-Tabs.Tab = Tab
+NavigationTabs.Tab = Tab
 
-export default Tabs
+export default NavigationTabs

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import ArrowLeft from '../Icons/ArrowLeft'
+import {ArrowLeft} from '../Icons'
 import { BackIcon } from './styles'
 
 type Props = {

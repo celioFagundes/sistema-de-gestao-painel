@@ -19,4 +19,4 @@ const CloseX: React.FC = (props: Props) => {
   )
 }
 
-export default CloseX
+export  {CloseX}

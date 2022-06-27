@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { AiOutlineClose } from 'react-icons/ai'
-import Search from '../Icons/Search'
+import {Search} from '../Icons'
 import { Input, Label, Wrapper, Icon, SearchResults, ResetSearchButton } from './styles'
 
 type Props = {

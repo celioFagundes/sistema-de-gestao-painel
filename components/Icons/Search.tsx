@@ -26,4 +26,4 @@ const Search: React.FC = (props: Props) => {
   )
 }
 
-export default Search
+export { Search }

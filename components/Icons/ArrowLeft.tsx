@@ -19,4 +19,4 @@ const ArrowLeft:React.FC = (props: Props) => {
   )
 }
 
-export default ArrowLeft
+export { ArrowLeft}

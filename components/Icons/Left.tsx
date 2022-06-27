@@ -20,4 +20,4 @@ const Left: React.FC = (props: Props) => {
   )
 }
 
-export default Left
+export  {Left}

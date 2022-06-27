@@ -25,4 +25,4 @@ const MoreVertical: React.FC = (props: Props) => {
   )
 }
 
-export default MoreVertical
+export {MoreVertical}

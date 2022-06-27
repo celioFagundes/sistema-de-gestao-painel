@@ -14,4 +14,4 @@ const CheckboxOn: React.FC = (props: Props) => {
   )
 }
 
-export default CheckboxOn
+export {CheckboxOn}

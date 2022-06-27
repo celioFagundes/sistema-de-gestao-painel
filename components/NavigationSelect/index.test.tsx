@@ -1,10 +1,10 @@
 import {  render, screen,} from '@testing-library/react'
-import SelectModal from './index'
+import NavigationSelect from './index'
 
 describe('SelectModal', () => {
   it('renders the select modal when opened', () => {
     render(
-      <SelectModal label='Colaboradores' isOpen={true} openFn={jest.fn()} closeFn={jest.fn()} />
+      <NavigationSelect currentPage='Colaboradores' isOpen={true} openFn={jest.fn()} closeFn={jest.fn()} />
     )
     const label = screen.getByTestId('label')
     const moreVerticalIcon = screen.getByRole('more-vertical-icon')
@@ -23,7 +23,7 @@ describe('SelectModal', () => {
   })
   it('renders the select modal when closed', () => {
     render(
-      <SelectModal label='Colaboradores' isOpen={false} openFn={jest.fn()} closeFn={jest.fn()} />
+      <NavigationSelect currentPage='Colaboradores' isOpen={false} openFn={jest.fn()} closeFn={jest.fn()} />
     )
     const label = screen.getByTestId('label')
     const moreVerticalIcon = screen.getByRole('more-vertical-icon')
