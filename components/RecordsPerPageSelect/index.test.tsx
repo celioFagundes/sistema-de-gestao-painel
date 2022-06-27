@@ -1,9 +1,9 @@
 import { fireEvent, render, screen } from '@testing-library/react'
-import PaginationSelect from './index'
+import RecordsPerPageSelect from './index'
 
 describe('PaginationSelect', () => {
   it('renders the pagination select register quantity to show', () => {
-    render(<PaginationSelect />)
+    render(<RecordsPerPageSelect />)
     
     const message = screen.getByText('Mostrando 10 de 50 registros')
     const select = screen.getByTestId('pagination-select')

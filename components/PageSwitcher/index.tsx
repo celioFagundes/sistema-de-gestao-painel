@@ -1,7 +1,7 @@
 import { Left, Refresh, Right } from '../Icons'
 import {
-  MobilePagination,
-  MobilePaginationLabel,
+  LoadMore,
+  LoadMoreLabel,
   PaginationButton,
   PaginationLabel,
   Wrapper,
@@ -19,7 +19,7 @@ type Props = {
   handleLoadMore: () => void
 }
 
-const Pagination = (props: Props) => {
+const PageSwitcher = (props: Props) => {
   return (
     <Wrapper>
       <PaginationButton
@@ -36,13 +36,13 @@ const Pagination = (props: Props) => {
         <Right />
       </PaginationButton>
       {props.limit < props.totalDocs && (
-        <MobilePagination onClick={props.handleLoadMore}>
+        <LoadMore onClick={props.handleLoadMore}>
           <Refresh />
-          <MobilePaginationLabel role='load-more'>Carregar mais</MobilePaginationLabel>
-        </MobilePagination>
+          <LoadMoreLabel role='load-more'>Carregar mais</LoadMoreLabel>
+        </LoadMore>
       )}
     </Wrapper>
   )
 }
 
-export default Pagination
+export default PageSwitcher

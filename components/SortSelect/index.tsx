@@ -66,6 +66,7 @@ const SortSelect = (props: Props) => {
           </ModalHeader>
           {props.options.map(opt => (
             <Option
+              key={opt.name}
               name={opt.name}
               value={opt.value}
               applySortFn={props.applySortFn}

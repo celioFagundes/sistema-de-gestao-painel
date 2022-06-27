@@ -6,7 +6,7 @@ type Props = {
   onChange: (value: number) => void
 }
 let selectOptions = [10, 20, 30, 40, 50]
-const PaginationSelect = (props: Props) => {
+const RecordsPerPageSelect = (props: Props) => {
   return (
     <Wrapper>
       <Message>
@@ -31,4 +31,4 @@ const PaginationSelect = (props: Props) => {
   )
 }
 
-export default PaginationSelect
+export default RecordsPerPageSelect

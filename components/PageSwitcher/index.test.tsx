@@ -1,9 +1,9 @@
 import {   render, screen } from '@testing-library/react'
-import Pagination from './index'
+import PageSwitcher from './index'
 
 describe('Pagination', () => {
   it('renders the pagination', () => {
-    render(<Pagination />)
+    render(<PageSwitcher />)
     const label = screen.getByText('1 de 10')
     const prevButton = screen.getByRole('previous-page')
     const nextButton = screen.getByRole('next-page')

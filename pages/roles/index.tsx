@@ -5,7 +5,7 @@ import TableDrop from '../../components/TableToDropdown'
 import Layout from '../../components/Layout'
 import ActionsModal from '../../components/ActionsModal'
 import SearchInput from '../../components/SearchInput'
-import Pagination from '../../components/Pagination'
+import PageSwitcher from '../../components/PageSwitcher'
 import NavigationSelect from '../../components/NavigationSelect'
 import NavigationTabs from '../../components/NavigationTabs'
 import {
@@ -182,7 +182,7 @@ const Roles: React.FC = () => {
             </TableDrop>
           )}
           <BottomContainerSingle>
-            <Pagination />
+            <PageSwitcher />
           </BottomContainerSingle>
         </Content>
       </Layout>

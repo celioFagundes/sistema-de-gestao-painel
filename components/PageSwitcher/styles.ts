@@ -43,10 +43,10 @@ export const PaginationLabel = styled(BoldText)`
     display: none;
   }
 `
-export const MobilePaginationLabel = styled(BoldText)`
+export const LoadMoreLabel = styled(BoldText)`
   margin: 0 12px;
 `
-export const MobilePagination = styled.div`
+export const LoadMore = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;

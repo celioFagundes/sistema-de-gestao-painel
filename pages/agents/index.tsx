@@ -7,8 +7,8 @@ import Seo from '../../components/Seo'
 import Layout from '../../components/Layout'
 import TableDrop from '../../components/TableToDropdown'
 import SearchInput from '../../components/SearchInput'
-import PaginationSelect from '../../components/PaginationSelect'
-import Pagination from '../../components/Pagination'
+import RecordsPerPageSelect from '../../components/RecordsPerPageSelect'
+import PageSwitcher from '../../components/PageSwitcher'
 import NavigationSelect from '../../components/NavigationSelect'
 import NavigationTabs from '../../components/NavigationTabs'
 import ActionsModal, { Action, MobileActionsToggle } from '../../components/ActionsModal'
@@ -153,7 +153,7 @@ const Agents: React.FC = ({}) => {
   const toggleSortSelectModal = (state: boolean) => {
     setModalMobileSort(state)
   }
-  const closeAnyActiveOptionsModal = () => {
+  const closeAnyActiveActionsModal = () => {
     let newList = { ...modalIsOpenList }
     Object.keys(newList).forEach(item => (newList[item] = false))
     setModalIsOpenList(newList)
@@ -284,7 +284,7 @@ const Agents: React.FC = ({}) => {
                         </DotsIcon>
                         <ActionsModal
                           isOpen={modalIsOpenList[agent._id]}
-                          closeFn={closeAnyActiveOptionsModal}
+                          closeFn={closeAnyActiveActionsModal}
                         >
                           <Action url={'/agents/1'} isActive={true} icon={Eye}>
                             Ver colaborador
@@ -300,12 +300,12 @@ const Agents: React.FC = ({}) => {
                 </TableDrop.Body>
               </TableDrop>
               <BottomContainer>
-                <PaginationSelect
+                <RecordsPerPageSelect
                   limit={queryOptions.limit}
                   totalDocs={data.results.totalDocs}
                   onChange={handleSelectLimit}
                 />
-                <Pagination
+                <PageSwitcher
                   limit={queryOptions.limit}
                   totalDocs={data.results.totalDocs}
                   page={queryOptions.page}
