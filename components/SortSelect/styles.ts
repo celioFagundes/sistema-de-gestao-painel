@@ -4,20 +4,17 @@ import { BoldText, NormalText } from '../../styles/texts'
 type IsOpen = {
   isOpen: boolean
 }
-type isChecked = {
-  isChecked: boolean
-}
 export const Wrapper = styled.div`
   position: relative;
   @media (min-width: 768px) {
     display: none;
   }
 `
-export const ToggleContainer = styled.div`
+export const Toggle = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  padding: 10px 20px;
   background: #ffffff;
   border: 2px solid #cad6d1;
   border-radius: 8px;

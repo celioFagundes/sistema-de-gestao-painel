@@ -91,7 +91,7 @@ const Agents: React.FC = ({}) => {
   const [modalIsOpenList, setModalIsOpenList] = useState<IsOpenList>({})
   const [dropdownIsOpenList, setDropdownIsOpenList] = useState<IsOpenList>({})
   const [modalCategoriesIsOpen, setModalCategoriesIsOpen] = useState(false)
-  const [modalMobileSort, setModalMobileSort] = useState(true)
+  const [modalMobileSort, setModalMobileSort] = useState(false)
 
   useEffect(() => {
     const createActiveStatusList = () => {
@@ -189,6 +189,8 @@ const Agents: React.FC = ({}) => {
             closeFn={() => toggleCategoriesModal(false)}
             label={'Colaboradores'}
           />
+          <SearchInput onSubmit={handleSearchInput} querySlug={queryOptions.slug} />
+          <SectionTitle>Listagem de colaboradores</SectionTitle>
           <SortSelect
             isOpen={modalMobileSort}
             openFn={() => toggleMobileSortModal(true)}
@@ -197,10 +199,7 @@ const Agents: React.FC = ({}) => {
             applySortFn = {handleSortSelect}
             selectedCriteria={ queryOptions.criteria}
             selectedField={ queryOptions.field}
-          >
-          </SortSelect>
-          <SearchInput onSubmit={handleSearchInput} querySlug={queryOptions.slug} />
-          <SectionTitle>Listagem de colaboradores</SectionTitle>
+          />
           {(!data || data.results.docs.length < 1) && <p>Nenhum registro encontrado</p>}
           {data && data.results.docs.length > 0 && (
             <>

@@ -1,14 +1,15 @@
+import { AiOutlineSortAscending, AiOutlineSortDescending } from 'react-icons/ai'
 import CloseX from '../Icons/CloseX'
-import MoreVertical from '../Icons/MoreVertical'
 import Option from './option'
 import {
   Wrapper,
+  Toggle,
   Label,
   Icon,
   ModalHeader,
   ModalLabel,
   Modal,
-  ToggleContainer,
+
   ModalBackground,
 } from './styles'
 
@@ -20,22 +21,37 @@ type Props = {
   closeFn: () => void
   openFn: () => void
   isOpen: boolean
-  children: React.ReactNode
   options: OptionProps[]
   applySortFn: (field: string, criteria: string) => void
   selectedField: string
   selectedCriteria: string
 }
 
+
 const SortSelect = (props: Props) => {
+  let currentField = props.options.filter(opt => {
+    if(opt.value === props.selectedField)
+      return opt.name
+  })
   return (
     <Wrapper>
-      <ToggleContainer onClick={props.openFn}>
-        <Label data-testid='modal-mobile-sort-label'>Ordenar por:</Label>
+      <Toggle onClick={props.openFn}>
+        {
+          props.selectedField === '_id' &&
+          <Label data-testid='modal-mobile-sort-label'>Ordenar por:</Label>
+        }
+        {
+          props.selectedField !== '_id' &&
+          <Label data-testid='modal-mobile-sort-label'>Ordenando por: {currentField[0].name}</Label>
+        }
+        
         <Icon>
-          <MoreVertical />
+          {props.selectedCriteria === 'asc' 
+          ?  <AiOutlineSortAscending size = {22}/>
+          : <AiOutlineSortDescending size = {22}/>}
+          
         </Icon>
-      </ToggleContainer>
+      </Toggle>
       <>
         <ModalBackground
           isOpen={props.isOpen}
