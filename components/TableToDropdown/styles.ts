@@ -52,6 +52,9 @@ export const Tr = styled.div<TableRowType>`
   }
 `
 export const Th = styled.div<GridSpan>`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   width: 100%;
   margin-right: 10px;
   text-align: left;
@@ -115,7 +118,6 @@ export const Label = styled(BoldText)`
 `
 export const Value = styled.p`
   font-size: 12px;
-
 `
 export const DotsIcon = styled.div`
   cursor: pointer;

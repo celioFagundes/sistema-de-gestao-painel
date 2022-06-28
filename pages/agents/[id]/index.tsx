@@ -1,9 +1,11 @@
 import Image from 'next/image'
 import Seo from '../../../components/Seo'
+import useSWR from 'swr'
+import { fetcher } from '../../../lib/fetcher'
 
 import Layout from '../../../components/Layout'
 import BackButton from '../../../components/BackButton'
-import Card from '../../../components/Card'
+import { Card, CardIdentification, CardPhones } from '../../../components/Card'
 import Select from '../../../components/Select'
 
 import {
@@ -20,24 +22,20 @@ import {
   UserImage,
 } from '../../../styles/agents/details'
 import { PageTitle, SectionTitle } from '../../../styles/texts'
-import User from '../../../components/Icons/User'
-import ID from '../../../components/Icons/ID'
-import Phone from '../../../components/Icons/Phone'
-import Calendar from '../../../components/Icons/Calender'
-import useSWR from 'swr'
-import { fetcher } from '../../../lib/fetcher'
+import { User, ID, Phone, Calendar } from '../../../components/Icons'
+import { useRouter } from 'next/router'
 
 interface Phone {
   ddd: number
   ddi: number
   number: number
 }
-interface Document {
+interface Identification {
   type: string
   number: number
 }
 interface Agent {
-  id: number
+  _id: number
   name: string
   image: string
   department: string
@@ -45,23 +43,22 @@ interface Agent {
   role: string
   status: boolean
   email: string
-  phone: Phone
-  document: Document
+  phones: [Phone]
+  identification: [Identification]
   birth_date: Date
 }
 
 interface DataProps {
   agent: Agent
+  success: boolean
 }
-const Colaborador: React.FC = () => {
-  const { data, error } = useSWR<DataProps>('https://pp-api-desafio.herokuapp.com/agent/1', fetcher)
-  
-  const transformCPF = (text: string) => {
-    const badchars = /[^\d]/g
-    const mask = /(\d{3})(\d{3})(\d{3})(\d{2})/
-    const cpf = new String(text).replace(badchars, '')
-    return cpf.replace(mask, '$1.$2.$3-$4')
-  }
+const Agent: React.FC = () => {
+  const router = useRouter()
+  const { data, error } = useSWR<DataProps>(
+    router.query.id ? `http://localhost:3000/agents/${router.query.id}` : null,
+    fetcher
+  )
+
   return (
     <>
       <Seo title='Detalhe do colaborador' description='Detalhes do colaborador' />
@@ -76,7 +73,7 @@ const Colaborador: React.FC = () => {
               <UserImage>
                 {data.agent.image ? (
                   <Image
-                    src={data.agent.image}
+                    src={'https://dummyimage.com/80x80/000/fff'}
                     layout='fixed'
                     height={80}
                     width={80}
@@ -96,16 +93,8 @@ const Colaborador: React.FC = () => {
             </UserContainer>
             <SectionTitle>Informações pessoais</SectionTitle>
             <CardsWrapper>
-              <Card
-                Icon={ID}
-                dataTitle={data.agent.document.type}
-                data={transformCPF(data.agent.document.number.toString())}
-              />
-              <Card
-                Icon={Phone}
-                dataTitle='Telefone'
-                data={`+${data.agent.phone.ddi} ${data.agent.phone.ddd} ${data.agent.phone.number}`}
-              />
+              <CardIdentification data={data.agent.identification} />
+              <CardPhones data={data.agent.phones} />
               <Card
                 Icon={Calendar}
                 dataTitle='Nascimento'
@@ -140,4 +129,4 @@ const Colaborador: React.FC = () => {
   )
 }
 
-export default Colaborador
+export default Agent

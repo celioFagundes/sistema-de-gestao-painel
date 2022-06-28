@@ -1,8 +1,15 @@
 type Props = {}
 
-const Calendar:React.FC = (props: Props) => {
+const Calendar: React.FC = (props: Props) => {
   return (
-    <svg width='19' height='19' viewBox='0 0 19 19' fill='none' xmlns='http://www.w3.org/2000/svg' data-testid='calendar-icon'>
+    <svg
+      width='19'
+      height='19'
+      viewBox='0 0 19 19'
+      fill='none'
+      xmlns='http://www.w3.org/2000/svg'
+      data-testid='calendar-icon'
+    >
       <path
         fillRule='evenodd'
         clipRule='evenodd'
@@ -31,4 +38,4 @@ const Calendar:React.FC = (props: Props) => {
   )
 }
 
-export default Calendar
+export { Calendar}

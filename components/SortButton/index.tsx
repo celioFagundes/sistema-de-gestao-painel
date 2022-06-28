@@ -1,8 +1,7 @@
-import { Label, SortIcon, Wrapper } from './styles'
+import {  SortIcon, Wrapper } from './styles'
 import { AiOutlineSortAscending, AiOutlineSortDescending } from 'react-icons/ai'
 
 type Props = {
-  label: string
   field: string
   selectedCriteria: string
   onClick: (value:string) => void
@@ -11,7 +10,6 @@ type Props = {
 const SortButton = (props: Props) => {
   return (
     <Wrapper>
-      <Label htmlFor='select'>{props.label}</Label>
       <SortIcon onClick={() => props.onClick(props.field)}>
       {props.selectedCriteria === 'asc' 
           ?  <AiOutlineSortAscending size = {18}/>

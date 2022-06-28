@@ -1,5 +1,5 @@
 export * from './ArrowLeft'
-export * from './Calender'
+export * from './Calendar'
 export * from './CheckboxOff'
 export * from './CheckboxOn'
 export * from './CloseX'

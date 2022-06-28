@@ -1,7 +1,8 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import useSWR from 'swr'
 import Image from 'next/image'
-import { Eye, Down, MoreVertical,Trash ,Up} from '../../components/Icons'
+import { fetcher } from '../../lib/fetcher'
+import { Eye, Down, MoreVertical, Trash, Up } from '../../components/Icons'
 
 import Seo from '../../components/Seo'
 import Layout from '../../components/Layout'
@@ -25,8 +26,7 @@ import {
   Content,
 } from '../../styles/agents'
 import { PageTitle, SectionTitle } from '../../styles/texts'
-import { fetcher } from '../../lib/fetcher'
-
+import NavigateButton from '../../components/NavigateButton'
 
 
 const SORT_OPTIONS = [
@@ -79,8 +79,8 @@ const Agents: React.FC = ({}) => {
   )
   const [modalIsOpenList, setModalIsOpenList] = useState<IsOpenList>({})
   const [dropdownIsOpenList, setDropdownIsOpenList] = useState<IsOpenList>({})
-  const [modalNavigationIsOpen, setModalCategoriesIsOpen] = useState(false)
-  const [modalMobileSort, setModalMobileSort] = useState(false)
+  const [showNavigationModal, setShowNavigationModal] = useState(false)
+  const [showSortSelect, setShowSortSelect] = useState(false)
 
   useEffect(() => {
     const createActiveStatusList = () => {
@@ -107,7 +107,7 @@ const Agents: React.FC = ({}) => {
       setQueryOptions({ ...queryOptions, page: prevPage })
     }
   }
-  const handleSelectLimit = (value: number) => {
+  const handleRecordsPerPageSelect = (value: number) => {
     setQueryOptions({ ...queryOptions, limit: value, page: 1 })
   }
   const handleLoadMore = () => {
@@ -148,10 +148,10 @@ const Agents: React.FC = ({}) => {
     updateActiveStatusList(_id, dropdownIsOpenList, setDropdownIsOpenList)
   }
   const toggleNavigationModal = (state: boolean) => {
-    setModalCategoriesIsOpen(state)
+    setShowNavigationModal(state)
   }
   const toggleSortSelectModal = (state: boolean) => {
-    setModalMobileSort(state)
+    setShowSortSelect(state)
   }
   const closeAnyActiveActionsModal = () => {
     let newList = { ...modalIsOpenList }
@@ -173,15 +173,16 @@ const Agents: React.FC = ({}) => {
             </NavigationTabs.Tab>
           </NavigationTabs>
           <NavigationSelect
-            isOpen={modalNavigationIsOpen}
+            isOpen={showNavigationModal}
             openFn={() => toggleNavigationModal(true)}
             closeFn={() => toggleNavigationModal(false)}
             currentPage={'Colaboradores'}
           />
           <SearchInput onSubmit={handleSearchInput} querySlug={queryOptions.slug} />
           <SectionTitle>Listagem de colaboradores</SectionTitle>
+          <NavigateButton url='/agents/create'/>
           <SortSelect
-            isOpen={modalMobileSort}
+            isOpen={showSortSelect}
             openFn={() => toggleSortSelectModal(true)}
             closeFn={() => toggleSortSelectModal(false)}
             options={SORT_OPTIONS}
@@ -196,40 +197,40 @@ const Agents: React.FC = ({}) => {
                 <TableDrop.Header>
                   <TableDrop.Row numberOfColumns={7}>
                     <TableDrop.Th gridSpan>
+                      Nome Completo
                       <SortButton
-                        label='Nome completo'
                         field='name'
                         onClick={handleSortButton}
                         selectedCriteria={queryOptions.criteria}
                       />
                     </TableDrop.Th>
                     <TableDrop.Th gridSpan>
+                      Departamento
                       <SortButton
-                        label='Departamento'
                         field='department'
                         onClick={handleSortButton}
                         selectedCriteria={queryOptions.criteria}
                       />
                     </TableDrop.Th>
                     <TableDrop.Th gridSpan>
+                      Cargo
                       <SortButton
-                        label='Cargo'
                         field='role'
                         onClick={handleSortButton}
                         selectedCriteria={queryOptions.criteria}
                       />
                     </TableDrop.Th>
                     <TableDrop.Th gridSpan>
+                      Unidade
                       <SortButton
-                        label='Unidade'
                         field='branch'
                         onClick={handleSortButton}
                         selectedCriteria={queryOptions.criteria}
                       />
                     </TableDrop.Th>
                     <TableDrop.Th gridSpan>
+                      Status
                       <SortButton
-                        label='Status'
                         field='status'
                         onClick={handleSortButton}
                         selectedCriteria={queryOptions.criteria}
@@ -286,7 +287,7 @@ const Agents: React.FC = ({}) => {
                           isOpen={modalIsOpenList[agent._id]}
                           closeFn={closeAnyActiveActionsModal}
                         >
-                          <Action url={'/agents/1'} isActive={true} icon={Eye}>
+                          <Action url={`/agents/${agent._id}`} isActive={true} icon={Eye}>
                             Ver colaborador
                           </Action>
                           <Action url={'/agents/1'} isActive={false} icon={Trash}>
@@ -303,7 +304,7 @@ const Agents: React.FC = ({}) => {
                 <RecordsPerPageSelect
                   limit={queryOptions.limit}
                   totalDocs={data.results.totalDocs}
-                  onChange={handleSelectLimit}
+                  onChange={handleRecordsPerPageSelect}
                 />
                 <PageSwitcher
                   limit={queryOptions.limit}

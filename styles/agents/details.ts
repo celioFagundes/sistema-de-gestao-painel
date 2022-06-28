@@ -46,7 +46,7 @@ export const CardsWrapper = styled.section`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     flex-direction: column;
   }
 `
