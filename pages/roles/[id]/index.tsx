@@ -2,7 +2,7 @@ import Seo from '../../../components/Seo'
 
 import Layout from '../../../components/Layout'
 import Table from '../../../components/Table'
-import BackButton from '../../../components/BackButton'
+import BackButton from '../../../components/Navigation/BackButton'
 import Select from '../../../components/Select'
 
 import { SelectsRow, Content, PageTitleWrapper } from '../../../styles/roles/create'

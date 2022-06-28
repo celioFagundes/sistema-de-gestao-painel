@@ -4,7 +4,7 @@ import useSWR from 'swr'
 import { fetcher } from '../../../lib/fetcher'
 
 import Layout from '../../../components/Layout'
-import BackButton from '../../../components/BackButton'
+import BackButton from '../../../components/Navigation/BackButton'
 import { Card, CardIdentification, CardPhones } from '../../../components/Card'
 import Select from '../../../components/Select'
 

@@ -5,9 +5,9 @@ import TableDrop from '../../components/TableToDropdown'
 import Layout from '../../components/Layout'
 import ActionsModal from '../../components/ActionsModal'
 import SearchInput from '../../components/SearchInput'
-import PageSwitcher from '../../components/PageSwitcher'
-import NavigationSelect from '../../components/NavigationSelect'
-import NavigationTabs from '../../components/NavigationTabs'
+import PageSwitcher from '../../components/Pagination/PageSwitcher'
+import NavigationSelect from '../../components/Navigation/NavigationSelect'
+import NavigationTabs from '../../components/Navigation/NavigationTabs'
 import {
   ActionLabel,
   DropdownIcon,

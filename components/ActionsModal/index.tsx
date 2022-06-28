@@ -62,5 +62,5 @@ const MobileActionsToggle = (props: ActionsToggle) => {
     </ToggleWrapper>
   )
 }
-export default ActionsModal
-export { Action, MobileActionsToggle }
+
+export { ActionsModal, Action, MobileActionsToggle }

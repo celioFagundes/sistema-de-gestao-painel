@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { BoldText } from '../texts'
 
 type StatusProps = {
   status?: string
@@ -58,4 +59,29 @@ export const ImageWrapper = styled.div`
   min-width: 32px;
   border-radius:50%;
   background: linear-gradient(0deg, #eaefed, #eaefed);
+`
+export const DropdownIcon = styled.div`
+  position: absolute;
+  right: 10px;
+  top: 30%;
+  @media (min-width: 768px) {
+    display: none;
+  }
+`
+export const Label = styled(BoldText)`
+  margin-bottom: 6px;
+  font-size: 12px;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+`
+export const Value = styled.p`
+  font-size: 12px;
+`
+export const DotsIcon = styled.div`
+  cursor: pointer;
+  @media (max-width: 768px) {
+    display: none;
+  }
 `

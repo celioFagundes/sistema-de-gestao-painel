@@ -6,17 +6,12 @@ import { Eye, Down, MoreVertical, Trash, Up } from '../../components/Icons'
 
 import Seo from '../../components/Seo'
 import Layout from '../../components/Layout'
-import TableDrop from '../../components/TableToDropdown'
-import SearchInput from '../../components/SearchInput'
-import RecordsPerPageSelect from '../../components/RecordsPerPageSelect'
-import PageSwitcher from '../../components/PageSwitcher'
-import NavigationSelect from '../../components/NavigationSelect'
-import NavigationTabs from '../../components/NavigationTabs'
-import ActionsModal, { Action, MobileActionsToggle } from '../../components/ActionsModal'
-import SortSelect from '../../components/SortSelect'
-import SortButton from '../../components/SortButton'
-
-import { DropdownIcon, Value, Label, DotsIcon } from '../../components/TableToDropdown/styles'
+import { TableDrop } from '../../components/Tables'
+import { SearchInput } from '../../components/Inputs/'
+import { PageSwitcher, RecordsPerPageSelect } from '../../components/Pagination/'
+import { NavigationTabs, NavigationSelect, NavigateButton } from '../../components/Navigation/'
+import { ActionsModal, Action, MobileActionsToggle } from '../../components/ActionsModal'
+import { SortSelect, SortButton } from '../../components/Sorting/'
 import {
   AvatarNameContainer,
   ImageWrapper,
@@ -24,10 +19,12 @@ import {
   Status,
   BottomContainer,
   Content,
+  DropdownIcon,
+  Value,
+  Label,
+  DotsIcon,
 } from '../../styles/agents'
 import { PageTitle, SectionTitle } from '../../styles/texts'
-import NavigateButton from '../../components/NavigateButton'
-
 
 const SORT_OPTIONS = [
   { name: 'Nome completo', value: 'name' },
@@ -180,7 +177,7 @@ const Agents: React.FC = ({}) => {
           />
           <SearchInput onSubmit={handleSearchInput} querySlug={queryOptions.slug} />
           <SectionTitle>Listagem de colaboradores</SectionTitle>
-          <NavigateButton url='/agents/create'/>
+          <NavigateButton url='/agents/create' />
           <SortSelect
             isOpen={showSortSelect}
             openFn={() => toggleSortSelectModal(true)}
