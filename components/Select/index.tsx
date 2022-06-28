@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { ChangeEventHandler } from 'react'
 import { Label, OptionLabel, Selection, Wrapper } from './styles'
 
 type Props = {
   label: string
   children: React.ReactNode
   bgColor?: string
+  name: string
+  onChange: ChangeEventHandler<HTMLSelectElement>
 }
 
 type OptionProps = {
@@ -15,14 +17,27 @@ const Select = (props: Props) => {
   return (
     <Wrapper>
       <Label htmlFor='select'>{props.label}</Label>
-      <Selection bgColor={props.bgColor} id='select' data-testid='select'>
+      <Selection
+        onChange={props.onChange}
+        name={props.name}
+        id='select'
+        data-testid='select'
+        bgColor={props.bgColor}
+      >
+        <option hidden value=''>
+          Selecionar
+        </option>
         {props.children}
       </Selection>
     </Wrapper>
   )
 }
 const Option = (props: OptionProps) => {
-  return <OptionLabel value={props.value} data-testid='select-option'>{props.children}</OptionLabel>
+  return (
+    <OptionLabel value={props.value} data-testid='select-option'>
+      {props.children}
+    </OptionLabel>
+  )
 }
 Select.Option = Option
 export default Select
