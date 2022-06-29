@@ -1,6 +1,12 @@
 import styled from '@emotion/styled'
+import { BoldText } from '../../../styles/texts'
 
 export const Wrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+`
+export const Container = styled.div`
   display: grid;
   grid-template-columns: 70px 70px 50%;
   gap: 10px;
@@ -54,4 +60,22 @@ export const DDI = styled(BaseInput)``
 export const DDD = styled(BaseInput)``
 export const Number = styled(BaseInput)`
   text-align:left;
+`
+export const ErrorContainer = styled.div`
+  display: flex;
+  justify-content:flex-start;
+  align-items: center;
+  margin-top:3px;
+`
+export const ErrorIcon = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  color: #FBAF00;
+  margin-right:5px;
+`
+export const ErrorMessage = styled(BoldText)`
+  font-size: 12px;
+  color: #FBAF00;
 `

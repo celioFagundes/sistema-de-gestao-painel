@@ -27,15 +27,16 @@ import useSWR from 'swr'
 import { fetcher } from '../../lib/fetcher'
 import { useEffect } from 'react'
 import axios from 'axios'
+import { parse } from 'date-fns'
 
 interface Phone {
-  ddd: number
-  ddi: number
-  number: number
+  ddi: string
+  ddd: string
+  number: string
 }
 interface Identification {
   type: string
-  number: number
+  number: string
 }
 
 interface Department {
@@ -85,21 +86,21 @@ const AgentSchema = Yup.object().shape({
   branch: Yup.string()
     .min(3, 'Por favor, informe um slug com pelo menos 3 caracteres')
     .required('Por favor, informe um slug'),
-  status: Yup.string()
-    .required('Por favor, informe um slug'),
+  status: Yup.string().required('Por favor, informe um slug'),
   birth_date: Yup.date()
+    .transform((value, originalValue) => parse(originalValue, 'dd/MM/yyyy', new Date()))
     .required('Por favor, informe um slug'),
   phones: Yup.array().of(
     Yup.object().shape({
-      ddi: Yup.string(),
-      ddd: Yup.string(),
-      number: Yup.string(),
+      ddi: Yup.string().required('Digite o DDI.'),
+      ddd: Yup.string().required('Digite o DDD.'),
+      number: Yup.string().required('Digite o número'),
     })
   ),
   identification: Yup.array().of(
     Yup.object().shape({
-      type: Yup.string(),
-      number: Yup.string(),
+      type: Yup.string().required('Por favor, informe um slug'),
+      number: Yup.string().required('Por favor, informe um slug'),
     })
   ),
 })
@@ -142,6 +143,23 @@ const CreateAgent: React.FC = () => {
     }
     resetBranchValue()
   }, [form.values.department])
+
+  const handlePhoneInputErrorMessage = (index:number) => {
+    let errorMessage = ''
+    if(!form.errors.phones?.[index]){
+      return ''
+    }
+    if((form.errors.phones[index] as Phone).ddi){
+      errorMessage += (form.errors.phones[index] as Phone).ddi
+    }
+    if((form.errors.phones[index] as Phone).ddd){
+      errorMessage += (form.errors.phones[index] as Phone).ddd
+    }
+    if((form.errors.phones[index] as Phone).number){
+      errorMessage += (form.errors.phones[index] as Phone).number
+    }
+    return errorMessage
+  }
   return (
     <>
       <Seo title='Criar novo colaborador' description='Criar novo colaborador' />
@@ -156,16 +174,12 @@ const CreateAgent: React.FC = () => {
               <UserImage>
                 <User />
               </UserImage>
-
               <UserData>
                 <Username></Username>
                 <Email></Email>
               </UserData>
             </UserContainer>
-            {JSON.stringify(form.values, null, 2)}
-            
             <SectionTitle>Informações pessoais</SectionTitle>
-
             <InputsWrapper>
               <Input
                 id='name-input'
@@ -174,6 +188,8 @@ const CreateAgent: React.FC = () => {
                 onChange={form.handleChange}
                 value={form.values.name}
                 placeholder='Insire o nome do colaborador'
+                errorMessage={form.errors.name}
+                onBlur={form.handleBlur}
               />
               <Input
                 id='email-input'
@@ -182,6 +198,8 @@ const CreateAgent: React.FC = () => {
                 onChange={form.handleChange}
                 value={form.values.email}
                 placeholder='Insire o email do colaborador'
+                errorMessage={form.errors.email}
+                onBlur={form.handleBlur}
               />
               <Input
                 id='nascimento-input'
@@ -190,9 +208,12 @@ const CreateAgent: React.FC = () => {
                 onChange={form.handleChange}
                 value={form.values.birth_date}
                 placeholder='Insire a data de nascimento do colaborador'
+                errorMessage={form.errors.birth_date}
+                onBlur={form.handleBlur}
               />
             </InputsWrapper>
             <SectionTitle>Documentos</SectionTitle>
+
             <InputsWrapper>
               <Input
                 id='cpf-input'
@@ -201,6 +222,12 @@ const CreateAgent: React.FC = () => {
                 onChange={form.handleChange}
                 value={form.values.identification[0].number}
                 placeholder='Insire o CPF do colaborador'
+                errorMessage={
+                  form.errors.identification?.[0]
+                    ? (form.errors.identification[0] as Identification).number
+                    : ''
+                }
+                onBlur={form.handleBlur}
               />
               <Input
                 id='rg-input'
@@ -209,6 +236,12 @@ const CreateAgent: React.FC = () => {
                 placeholder='Insire o RG do colaborador'
                 onChange={form.handleChange}
                 value={form.values.identification[1].number}
+                errorMessage={
+                  form.errors.identification?.[1]
+                    ? (form.errors.identification[1] as Identification).number
+                    : ''
+                }
+                onBlur={form.handleBlur}
               />
               <Input
                 id='cnh-input'
@@ -217,6 +250,12 @@ const CreateAgent: React.FC = () => {
                 onChange={form.handleChange}
                 value={form.values.identification[2].number}
                 placeholder='Insire o n° da CNH do colaborador'
+                errorMessage={
+                  form.errors.identification?.[2]
+                    ? (form.errors.identification[2] as Identification).number
+                    : ''
+                }
+                onBlur={form.handleBlur}
               />
             </InputsWrapper>
             <SectionTitle>Telefones</SectionTitle>
@@ -230,6 +269,8 @@ const CreateAgent: React.FC = () => {
                   dddValue={form.values.phones[0].ddd}
                   numberValue={form.values.phones[0].number}
                   onChange={form.handleChange}
+                  errorMessage={handlePhoneInputErrorMessage(0)}
+                  onBlur={form.handleBlur}
                 />
                 <PhoneInput
                   ddiName={`phones.${[1]}.ddi`}
@@ -239,6 +280,8 @@ const CreateAgent: React.FC = () => {
                   dddValue={form.values.phones[1].ddd}
                   numberValue={form.values.phones[1].number}
                   onChange={form.handleChange}
+                  errorMessage={handlePhoneInputErrorMessage(1)}
+                  onBlur={form.handleBlur}
                 />
               </PhoneInputsWrapper>
             </PhonesSection>
@@ -300,7 +343,6 @@ const CreateAgent: React.FC = () => {
             </SectionOrganizationalData>
             <button type='submit'>Criar</button>
           </form>
-          {JSON.stringify(form.errors, null, 2)}
         </Content>
       </Layout>
     </>

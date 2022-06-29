@@ -1,6 +1,14 @@
-import { ChangeEventHandler } from 'react'
-import { Label, Wrapper, InputElement } from './styles'
-
+import { ChangeEventHandler, FocusEventHandler } from 'react'
+import {
+  Label,
+  Wrapper,
+  InputElement,
+  ErrorMessage,
+  Container,
+  ErrorContainer,
+  ErrorIcon,
+} from './styles'
+import { BiError } from 'react-icons/bi'
 type Props = {
   id: string
   label: string
@@ -8,22 +16,35 @@ type Props = {
   placeholder: string
   value: string
   onChange: ChangeEventHandler<HTMLInputElement>
+  onBlur?:  FocusEventHandler<HTMLInputElement>
+  errorMessage?: string
 }
 
 const Input = (props: Props) => {
   return (
-    <Wrapper >
-      <Label htmlFor={props.id}>{props.label}</Label>
-      <InputElement
-        id={props.id}
-        name={props.name}
-        onChange={props.onChange}
-        value = {props.value}
-        placeholder={props.placeholder}
-      />
+    <Wrapper>
+      <Container>
+        <Label htmlFor={props.id}>{props.label}</Label>
+        <InputElement
+          id={props.id}
+          name={props.name}
+          onChange={props.onChange}
+          value={props.value}
+          placeholder={props.placeholder}
+          onBlur = {props.onBlur}
+        />
+      </Container>
+      {props.errorMessage && (
+        <ErrorContainer>
+          <ErrorIcon>
+            <BiError />
+          </ErrorIcon>
+
+          <ErrorMessage>{props.errorMessage}</ErrorMessage>
+        </ErrorContainer>
+      )}
     </Wrapper>
   )
 }
 
-
-export  {Input}
+export { Input }
