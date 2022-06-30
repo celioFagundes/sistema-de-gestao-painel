@@ -69,7 +69,7 @@ export const ActionIcon = styled.div`
   
 `
 export const Action = styled.a<IsActive>`
-  width: 140px;
+  width: 100%;
   color: ${props => (props.isActive ? '#587169' : '#A3B8B0')};
   font-style: normal;
   font-weight: 500;

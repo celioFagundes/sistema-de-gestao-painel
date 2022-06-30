@@ -3,6 +3,7 @@ import {  Container, Label } from './styles'
 import {BsFillPersonPlusFill} from 'react-icons/bs'
 type Props = {
     url: string
+    label: string
 }
 
 const NavigateButton = (props: Props) => {
@@ -11,7 +12,7 @@ const NavigateButton = (props: Props) => {
       <Container>
         <BsFillPersonPlusFill size = {22} />
         <Label>
-        Novo colaborador
+        {props.label}
         </Label>
         
       </Container>

@@ -16,8 +16,8 @@ interface AgentDetails {
   role: string
   status: string
   email: string
-  phones: [PhoneInterface]
-  identification: [IdentificationInterface]
+  phones: PhoneInterface[]
+  identification: IdentificationInterface[]
   birth_date: Date
 }
 interface PhoneInterface {

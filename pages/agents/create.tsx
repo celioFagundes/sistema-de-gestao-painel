@@ -31,20 +31,8 @@ import { IdentificationInterface, PhoneInterface } from '../../types/agent'
 import { Department } from '../../types/department'
 import { Role } from '../../types/role'
 import { Button } from '../../components/Buttons'
+import Router, { useRouter } from 'next/router'
 
-interface CreateAgent {
-  _id: number
-  name: string
-  image: string
-  department: string
-  branch: string
-  role: string
-  status: string
-  email: string
-  phones: [PhoneInterface]
-  identification: [IdentificationInterface]
-  birth_date: Date
-}
 interface DepartmentsData {
   results: [Department]
   success: boolean
@@ -121,6 +109,7 @@ const AgentSchema = Yup.object().shape({
   ),
 })
 const CreateAgent: React.FC = () => {
+  const router = useRouter()
   const { data: departments } = useSWR<DepartmentsData>(
     'http://localhost:3000/departments/',
     fetcher
@@ -153,7 +142,10 @@ const CreateAgent: React.FC = () => {
       const dateParts = values.birth_date.split('/')
       const validDate = `${dateParts[1]}/${dateParts[0]}/${dateParts[2]}`
       const newValues = { ...values, birth_date: validDate }
-      await axios.post('http://localhost:3000/agents/', newValues)
+      const createData = await axios.post('http://localhost:3000/agents/', newValues)
+      if(createData.status){
+        router.push('/agents')
+      }
     },
   })
   useEffect(() => {

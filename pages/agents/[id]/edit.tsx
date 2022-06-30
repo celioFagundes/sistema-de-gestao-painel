@@ -1,129 +1,400 @@
 import Image from 'next/image'
 import Seo from '../../../components/Seo'
-import useSWR from 'swr'
-import { fetcher } from '../../../lib/fetcher'
+import * as Yup from 'yup'
+import { useFormik } from 'formik'
 
 import Layout from '../../../components/Layout'
-import BackButton from '../../../components/Navigation/BackButton'
-import { Card, CardIdentification, CardPhones } from '../../../components/Card'
 import Select from '../../../components/Select'
+import { BackButton } from '../../../components/Navigation/'
+import { User } from '../../../components/Icons'
+import { Input, PhoneInput } from '../../../components/Inputs'
 
+import { PageTitle, SectionTitle } from '../../../styles/texts'
 import {
   PageTitleWrapper,
   Content,
-  UserContainer,
-  UserData,
-  Username,
-  Email,
-  CardsWrapper,
   SectionOrganizationalData,
   SelectsContainerWrapper,
   SelectsRow,
   UserImage,
-} from '../../../styles/agents/details'
-import { PageTitle, SectionTitle } from '../../../styles/texts'
-import { User, ID, Phone, Calendar } from '../../../components/Icons'
+  InputsWrapper,
+  PhoneInputsWrapper,
+  PhonesSection,
+} from '../../../styles/agents/create'
+import useSWR from 'swr'
+import { fetcher } from '../../../lib/fetcher'
+import { useEffect } from 'react'
+import axios from 'axios'
+import { parse } from 'date-fns'
+import { MaskedInput } from '../../../components/Inputs/Masked'
+import { AgentDetails, IdentificationInterface, PhoneInterface } from '../../../types/agent'
+import { Department } from '../../../types/department'
+import { Role } from '../../../types/role'
+import { Button } from '../../../components/Buttons'
 import { useRouter } from 'next/router'
 
-interface Phone {
-  ddd: number
-  ddi: number
-  number: number
-}
-interface Identification {
-  type: string
-  number: number
-}
-interface Agent {
-  _id: number
-  name: string
-  image: string
-  department: string
-  branch: string
-  role: string
-  status: boolean
-  email: string
-  phones: [Phone]
-  identification: [Identification]
-  birth_date: Date
-}
 
-interface DataProps {
-  agent: Agent
+interface DepartmentsData {
+  results: [Department]
   success: boolean
 }
+interface RolesData {
+  results: [Role]
+  success: boolean
+}
+interface AgentData {
+  agent: AgentDetails
+  success: boolean
+}
+const AgentSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(3, 'Por favor, informe um nome com pelo menos 3 caracteres')
+    .required('Por favor, informe o nome do colaborador'),
+  email: Yup.string()
+    .email('Por favor, informe um email válido')
+    .required('Por favor, informe um email '),
+  department: Yup.string().required('Por favor, selecione um departamento'),
+  role: Yup.string().required('Por favor, selecione um cargo'),
+  branch: Yup.string().required('Por favor, selecione uma unidade'),
+  status: Yup.string().required('Por favor, selecione o status'),
+  birth_date: Yup.date()
+    .transform((value, originalValue) => parse(originalValue, 'dd/mm/yyyy', new Date()))
+    .typeError('Por favor, informe uma data de nascimento válida')
+    .required('Por favor, informe a data de nascimento'),
+  phones: Yup.array().of(
+    Yup.object().shape({
+      ddi: Yup.string()
+        .transform((value, originalValue) => originalValue.replace('+', '').replace('x', ''))
+        .min(2, 'Digite um DDI válido')
+        .required('Digite o DDI.'),
+      ddd: Yup.string()
+        .transform((value, originalValue) =>
+          originalValue.replace('(', '').replace(')', '').replace('x', '')
+        )
+        .min(2, 'Digite um DDD válido')
+        .required('Digite o DDD.'),
+      number: Yup.string()
+        .transform((value, originalValue) =>
+          originalValue.replace('-', '').replace(' ', '').replace('x', '')
+        )
+        .min(9, 'Digite um número válido')
+        .required('Digite o número'),
+    })
+  ),
+  identification: Yup.array().of(
+    Yup.object().shape({
+      type: Yup.string().required('Por favor, informe um slug'),
+      number: Yup.string().when('type', type => {
+        if (type === 'CPF') {
+          return Yup.string()
+            .transform(value =>
+              value
+                .split('')
+                .filter((char: string) => char !== '-' && char !== '.' && char !== 'x')
+                .join('')
+            )
+            .min(11, 'Digite um CPF válido')
+            .required('Por favor, informe um CPF')
+        }
+        if (type === 'RG') {
+          return Yup.string()
+            .transform(value => value.replace('x', ''))
+            .min(10, 'Digite um RG válido')
+            .required('Por favor, informe um RG')
+        }
+        if (type === 'CNH') {
+          return Yup.string()
+            .transform(value => value.replace('x', ''))
+            .min(11, 'Digite uma CNH válida')
+            .required('Por favor, informe uma CNH')
+        }
+        return Yup.string()
+      }),
+    })
+  ),
+})
 const EditAgent: React.FC = () => {
   const router = useRouter()
-  const { data, error } = useSWR<DataProps>(
+  const { data: agentData, error } = useSWR<AgentData>(
     router.query.id ? `http://localhost:3000/agents/${router.query.id}` : null,
     fetcher
   )
+  const { data: departments } = useSWR<DepartmentsData>(
+    'http://localhost:3000/departments/',
+    fetcher
+  )
+  const { data: roles } = useSWR<RolesData>('http://localhost:3000/roles/', fetcher)
+  const form = useFormik({
+    validateOnChange: false,
+    validateOnMount: false,
+    validateOnBlur: true,
+    initialValues: {
+      name: '',
+      email: '',
+      birth_date: '',
+      department: '',
+      role: '',
+      branch: '',
+      status: '',
+      phones: [
+        { ddi: '', ddd: '', number: '' },
+        { ddi: '', ddd: '', number: '' },
+      ],
+      identification: [
+        { type: 'CPF', number: '' },
+        { type: 'RG', number: '' },
+        { type: 'CNH', number: '' },
+      ],
+    },
+    validationSchema: AgentSchema,
+    onSubmit: async values => {
+      const dateParts = values.birth_date.split('/')
+      const validDate = `${dateParts[1]}/${dateParts[0]}/${dateParts[2]}`
+      const newValues = { ...values, birth_date: validDate }
+      const updateData = await axios.put(`http://localhost:3000/agents/${router.query.id}`, newValues)
+      if(updateData.status){
+        router.push('/agents')
+      }
+    },
+  })
+  useEffect(() => {
+    const fillFormFields = () => {
+      if (!agentData || !agentData?.agent) {
+        return null
+      }
+      form.setFieldValue('name', agentData.agent.name)
+      form.setFieldValue('email', agentData.agent.email)
+      form.setFieldValue('birth_date', new Date(agentData.agent.birth_date).toLocaleDateString())
+      form.setFieldValue('department', agentData.agent.department)
+      form.setFieldValue('branch', agentData.agent.branch)
+      form.setFieldValue('role', agentData.agent.role)
+      form.setFieldValue('status', agentData.agent.status)
+      form.setFieldValue(`identification`, agentData.agent.identification)
+      form.setFieldValue(`phones`, agentData.agent.phones)
+    }
+    fillFormFields()
+  }, [agentData])
+  useEffect(() => {
+    const resetBranchValue = () => {
+      if (form.values.department !== agentData?.agent.department) {
+        form.setFieldValue('branch', '')
+      }
+    }
+    resetBranchValue()
+  }, [form.values.department])
 
+  const handleIdentificationErrorMessage = (index: number) => {
+    if (!form.errors.identification?.[index]) {
+      return ''
+    }
+    return (form.errors.identification[index] as IdentificationInterface).number
+  }
+  const handlePhoneInputErrorMessage = (index: number) => {
+    let errorMessage = ''
+    if (!form.errors.phones?.[index]) {
+      return ''
+    }
+    const convertToPhone = form.errors.phones[index] as PhoneInterface
+    if (convertToPhone.ddi) {
+      errorMessage += convertToPhone.ddi + ' '
+    }
+    if (convertToPhone.ddd) {
+      errorMessage += convertToPhone.ddd + ' '
+    }
+    if (convertToPhone.number) {
+      errorMessage += convertToPhone.number
+    }
+    return errorMessage
+  }
   return (
     <>
-      <Seo title='Detalhe do colaborador' description='Detalhes do colaborador' />
+      <Seo title='Criar novo colaborador' description='Criar novo colaborador' />
       <Layout>
         <PageTitleWrapper>
           <BackButton url='/agents' />
-          <PageTitle>Detalhes do colaborador</PageTitle>
+          <PageTitle>Editar colaborador</PageTitle>
         </PageTitleWrapper>
-        {data && (
-          <Content>
-            <UserContainer>
+        <Content>
+          {agentData && agentData.agent && (
+            <form onSubmit={form.handleSubmit}>
               <UserImage>
-                {data.agent.image ? (
-                  <Image
-                    src={'https://dummyimage.com/80x80/000/fff'}
-                    layout='fixed'
-                    height={80}
-                    width={80}
-                    objectFit='cover'
-                    alt='avatar'
-                    style={{ borderRadius: '50%' }}
-                  />
-                ) : (
-                  <User />
-                )}
+                <User />
               </UserImage>
+              <SectionTitle>Informações pessoais</SectionTitle>
+              <InputsWrapper>
+                <Input
+                  id='name-input'
+                  name='name'
+                  label='Nome Completo'
+                  onChange={form.handleChange}
+                  value={form.values.name}
+                  placeholder='Insire o nome do colaborador'
+                  errorMessage={form.errors.name}
+                  onBlur={form.handleBlur}
+                />
+                <Input
+                  id='email-input'
+                  name='email'
+                  label='Email'
+                  onChange={form.handleChange}
+                  value={form.values.email}
+                  placeholder='Insire o email do colaborador'
+                  errorMessage={form.errors.email}
+                  onBlur={form.handleBlur}
+                />
+                <MaskedInput
+                  mask='Data'
+                  id='nascimento-input'
+                  name='birth_date'
+                  label='Data de nascimento'
+                  value={form.values.birth_date}
+                  placeholder='Insire a data de nascimento do colaborador'
+                  errorMessage={form.errors.birth_date}
+                  onChange={form.handleChange}
+                  onBlur={form.handleBlur}
+                />
+              </InputsWrapper>
+              <SectionTitle>Documentos</SectionTitle>
 
-              <UserData>
-                <Username>{data.agent.name}</Username>
-                <Email>{data.agent.email}</Email>
-              </UserData>
-            </UserContainer>
-            <SectionTitle>Informações pessoais</SectionTitle>
-            <CardsWrapper>
-              <CardIdentification data={data.agent.identification} />
-              <CardPhones data={data.agent.phones} />
-              <Card
-                Icon={Calendar}
-                dataTitle='Nascimento'
-                data={new Date(data.agent.birth_date).toLocaleDateString()}
-              />
-            </CardsWrapper>
-            <SectionOrganizationalData>
-              <SectionTitle>Dados Organizacionais</SectionTitle>
-              <SelectsContainerWrapper>
-                <SelectsRow>
-                  <Select label='Departamento' bgColor='#F5FAF8'>
-                    <Select.Option>Comercial</Select.Option>
-                  </Select>
-                  <Select label='Cargo' bgColor='#F5FAF8'>
-                    <Select.Option>Gerente</Select.Option>
-                  </Select>
-                </SelectsRow>
-                <SelectsRow>
-                  <Select label='Unidade' bgColor='#F5FAF8'>
-                    <Select.Option>Unidade 1</Select.Option>
-                  </Select>
-                  <Select label='Status' bgColor='#F5FAF8'>
-                    <Select.Option>Ativo</Select.Option>
-                  </Select>
-                </SelectsRow>
-              </SelectsContainerWrapper>
-            </SectionOrganizationalData>
-          </Content>
-        )}
+              <InputsWrapper>
+                <MaskedInput
+                  mask='CPF'
+                  id='cpf-input'
+                  name={`identification.${[0]}.number`}
+                  label='CPF'
+                  onChange={form.handleChange}
+                  value={form.values.identification[0].number}
+                  placeholder='Insire o CPF do colaborador'
+                  errorMessage={handleIdentificationErrorMessage(0)}
+                  onBlur={form.handleBlur}
+                />
+                <MaskedInput
+                  mask='RG'
+                  id='rg-input'
+                  name={`identification.${[1]}.number`}
+                  label='RG'
+                  placeholder='Insire o RG do colaborador'
+                  onChange={form.handleChange}
+                  value={form.values.identification[1].number}
+                  errorMessage={handleIdentificationErrorMessage(1)}
+                  onBlur={form.handleBlur}
+                />
+                <MaskedInput
+                  mask='CNH'
+                  id='cnh-input'
+                  name={`identification.${[2]}.number`}
+                  label='Carteira de motorista'
+                  onChange={form.handleChange}
+                  value={form.values.identification[2].number}
+                  placeholder='Insire o n° de registro da CNH do colaborador'
+                  errorMessage={handleIdentificationErrorMessage(2)}
+                  onBlur={form.handleBlur}
+                />
+              </InputsWrapper>
+              <SectionTitle>Telefones</SectionTitle>
+              <PhonesSection>
+                <PhoneInputsWrapper>
+                  <PhoneInput
+                    ddiName={`phones.${[0]}.ddi`}
+                    dddName={`phones.${[0]}.ddd`}
+                    numberName={`phones.${[0]}.number`}
+                    ddiValue={form.values.phones[0].ddi}
+                    dddValue={form.values.phones[0].ddd}
+                    numberValue={form.values.phones[0].number}
+                    onChange={form.handleChange}
+                    errorMessage={handlePhoneInputErrorMessage(0)}
+                    onBlur={form.handleBlur}
+                  />
+                  <PhoneInput
+                    ddiName={`phones.${[1]}.ddi`}
+                    dddName={`phones.${[1]}.ddd`}
+                    numberName={`phones.${[1]}.number`}
+                    ddiValue={form.values.phones[1].ddi}
+                    dddValue={form.values.phones[1].ddd}
+                    numberValue={form.values.phones[1].number}
+                    onChange={form.handleChange}
+                    errorMessage={handlePhoneInputErrorMessage(1)}
+                    onBlur={form.handleBlur}
+                  />
+                </PhoneInputsWrapper>
+              </PhonesSection>
+
+              <SectionOrganizationalData>
+                <SectionTitle>Dados Organizacionais</SectionTitle>
+                <SelectsContainerWrapper>
+                  <SelectsRow>
+                    <Select
+                      name='department'
+                      label='Departamento'
+                      defaultValue={form.values.department}
+                      bgColor='#F5FAF8'
+                      onChange={form.handleChange}
+                      errorMessage={form.errors.department}
+                      onBlur={form.handleBlur}
+                    >
+                      {departments &&
+                        departments.results.map(dept => (
+                          <Select.Option value={dept.name} key={dept._id}>
+                            {dept.name}
+                          </Select.Option>
+                        ))}
+                    </Select>
+                    <Select
+                      name='role'
+                      label='Cargo'
+                      defaultValue={form.values.role}
+                      bgColor='#F5FAF8'
+                      onChange={form.handleChange}
+                      errorMessage={form.errors.role}
+                      onBlur={form.handleBlur}
+                    >
+                      {roles &&
+                        roles.results.map(role => (
+                          <Select.Option value={role.name} key={role._id}>
+                            {role.name}
+                          </Select.Option>
+                        ))}
+                    </Select>
+                  </SelectsRow>
+                  <SelectsRow>
+                    <Select
+                      name='branch'
+                      label='Unidade'
+                      defaultValue={form.values.branch}
+                      bgColor='#F5FAF8'
+                      onChange={form.handleChange}
+                      errorMessage={form.errors.branch}
+                      onBlur={form.handleBlur}
+                    >
+                      {departments &&
+                        form.values.department !== '' &&
+                        departments.results
+                          .filter(dept => dept.name === form.values.department)[0]
+                          .branches.map(branch => (
+                            <Select.Option key={branch} value={branch}>
+                              {branch}
+                            </Select.Option>
+                          ))}
+                    </Select>
+                    <Select
+                      name='status'
+                      label='Status'
+                      defaultValue={form.values.status}
+                      onChange={form.handleChange}
+                      bgColor='#F5FAF8'
+                      errorMessage={form.errors.status}
+                      onBlur={form.handleBlur}
+                    >
+                      <Select.Option value='active'>Ativo</Select.Option>
+                      <Select.Option value='inactive'>Inativo</Select.Option>
+                    </Select>
+                  </SelectsRow>
+                </SelectsContainerWrapper>
+              </SectionOrganizationalData>
+              <Button type='submit'>Confirmar edição</Button>
+            </form>
+          )}
+        </Content>
       </Layout>
     </>
   )

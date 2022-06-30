@@ -18,6 +18,7 @@ type Props = {
   onChange?: ChangeEventHandler<HTMLSelectElement>
   onBlur?:  FocusEventHandler<HTMLSelectElement>
   errorMessage?: string
+  defaultValue?: string
 }
 
 type OptionProps = {
@@ -35,6 +36,7 @@ const Select = (props: Props) => {
         id='select'
         data-testid='select'
         bgColor={props.bgColor}
+        value = {props.defaultValue}
       >
         <option hidden value=''>
           Selecionar

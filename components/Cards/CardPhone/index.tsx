@@ -4,7 +4,7 @@ import { Left, Phone, Right } from '../../Icons'
 import { Data, DataTitle, Icon, Wrapper, DataWrapper, SwitchButton, ButtonsWrapper } from './styles'
 
 type CardPhoneProps = {
-  data: [PhoneInterface]
+  data: PhoneInterface[]
 }
 
 const CardPhone = (props: CardPhoneProps) => {

@@ -4,7 +4,7 @@ import { ID, Left, Phone, Right } from '../../Icons'
 import { Data, DataTitle, Icon, Wrapper, DataWrapper, SwitchButton, ButtonsWrapper } from './styles'
 
 type CardIdentificationProps = {
-  data: [IdentificationInterface]
+  data: IdentificationInterface[]
 }
 
 const CardIdentification = (props: CardIdentificationProps) => {

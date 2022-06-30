@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import useSWR from 'swr'
 import Image from 'next/image'
 import { fetcher } from '../../lib/fetcher'
-import { Eye, Down, MoreVertical, Trash, Up } from '../../components/Icons'
+import { Eye, Down, MoreVertical, Trash, Up, Edit } from '../../components/Icons'
 
 import Seo from '../../components/Seo'
 import Layout from '../../components/Layout'
@@ -10,7 +10,12 @@ import { TableDrop } from '../../components/Tables'
 import { SearchInput } from '../../components/Inputs/'
 import { PageSwitcher, RecordsPerPageSelect } from '../../components/Pagination/'
 import { NavigationTabs, NavigationSelect, NavigateButton } from '../../components/Navigation/'
-import { ActionsModal,  MobileActionsToggle, ActionLink, ActionButton } from '../../components/ActionsModal'
+import {
+  ActionsModal,
+  MobileActionsToggle,
+  ActionLink,
+  ActionButton,
+} from '../../components/ActionsModal'
 import { SortSelect, SortButton } from '../../components/Sorting/'
 import {
   AvatarNameContainer,
@@ -38,7 +43,7 @@ const SORT_OPTIONS = [
 
 interface DataProps {
   results: {
-    docs: [Agent]
+    docs: Agent[]
     hasNextPage: boolean
     hasPrevPage: boolean
     limit: number
@@ -64,7 +69,7 @@ const Agents: React.FC = ({}) => {
     criteria: 'asc',
     slug: '',
   })
-  const { data, error,mutate } = useSWR<DataProps>(
+  const { data, error, mutate } = useSWR<DataProps>(
     `http://localhost:3000/agents/?page=${queryOptions.page}&limit=${queryOptions.limit}&field=${queryOptions.field}&criteria=${queryOptions.criteria}&slug=${queryOptions.slug}`,
     fetcher
   )
@@ -86,15 +91,14 @@ const Agents: React.FC = ({}) => {
     createActiveStatusList()
   }, [data])
 
-  const removeAgent = async(id:string) =>{
+  const removeAgent = async (id: string) => {
     await axios.delete(`http://localhost:3000/agents/${id}`)
-    if(data && data.results.docs.length === 1){
-      if(queryOptions.page > 1){
-        setQueryOptions({...queryOptions, page: queryOptions.page - 1})
+    if (data && data.results.docs.length === 1) {
+      if (queryOptions.page > 1) {
+        setQueryOptions({ ...queryOptions, page: queryOptions.page - 1 })
       }
     }
     await mutate()
-    
   }
   const handleNextPage = () => {
     if (data && data.results.hasNextPage) {
@@ -181,7 +185,7 @@ const Agents: React.FC = ({}) => {
           />
           <SearchInput onSubmit={handleSearchInput} querySlug={queryOptions.slug} />
           <SectionTitle>Listagem de colaboradores</SectionTitle>
-          <NavigateButton url='/agents/create' />
+          <NavigateButton url='/agents/create' label='Novo colaborador'/>
           <SortSelect
             isOpen={showSortSelect}
             openFn={() => toggleSortSelectModal(true)}
@@ -291,7 +295,14 @@ const Agents: React.FC = ({}) => {
                           <ActionLink url={`/agents/${agent._id}`} isActive={true} icon={Eye}>
                             Ver colaborador
                           </ActionLink>
-                          <ActionButton onClick={() => removeAgent(agent._id)} isActive={true} icon={Trash}>
+                          <ActionLink url={`/agents/${agent._id}/edit`} isActive={true} icon={Edit}>
+                           Editar colaborador
+                          </ActionLink>
+                          <ActionButton
+                            onClick={() => removeAgent(agent._id)}
+                            isActive={true}
+                            icon={Trash}
+                          >
                             Excluir
                           </ActionButton>
                         </ActionsModal>
