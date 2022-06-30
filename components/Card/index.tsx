@@ -1,16 +1,8 @@
 import { useState } from 'react'
+import { IdentificationInterface, PhoneInterface } from '../../types/agent'
 import { ID, Left, Phone, Right } from '../Icons'
 import { Data, DataTitle, Icon, Wrapper, DataWrapper, SwitchButton, ButtonsWrapper } from './styles'
 
-interface Identification {
-  type: string
-  number: number
-}
-interface Phone {
-  ddd: number
-  ddi: number
-  number: number
-}
 type CardProps = {
   Icon: React.FC
   dataTitle: string | number
@@ -18,10 +10,10 @@ type CardProps = {
 }
 
 type CardIdentificationProps = {
-  data: [Identification]
+  data: [IdentificationInterface]
 }
 type CardPhoneProps = {
-  data: [Phone]
+  data: [PhoneInterface]
 }
 
 const Card = (props: CardProps) => {

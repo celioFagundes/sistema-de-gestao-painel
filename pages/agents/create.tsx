@@ -6,49 +6,32 @@ import { useFormik } from 'formik'
 import Layout from '../../components/Layout'
 import Select from '../../components/Select'
 import { BackButton } from '../../components/Navigation/'
-import { User, Phone } from '../../components/Icons'
+import { User } from '../../components/Icons'
 import { Input, PhoneInput } from '../../components/Inputs'
 
+import { PageTitle, SectionTitle } from '../../styles/texts'
 import {
   PageTitleWrapper,
   Content,
-  UserContainer,
-  UserData,
-  Username,
-  Email,
   SectionOrganizationalData,
   SelectsContainerWrapper,
   SelectsRow,
   UserImage,
-} from '../../styles/agents/details'
-import { PageTitle, SectionTitle } from '../../styles/texts'
-import { InputsWrapper, PhoneInputsWrapper, PhonesSection } from '../../styles/agents/create'
+  InputsWrapper,
+  PhoneInputsWrapper,
+  PhonesSection,
+} from '../../styles/agents/create'
 import useSWR from 'swr'
 import { fetcher } from '../../lib/fetcher'
 import { useEffect } from 'react'
 import axios from 'axios'
 import { parse } from 'date-fns'
+import { MaskedInput } from '../../components/Inputs/Masked'
+import { IdentificationInterface, PhoneInterface } from '../../types/agent'
+import { Department } from '../../types/department'
+import { Role } from '../../types/role'
+import { Button } from '../../components/Buttons'
 
-interface Phone {
-  ddi: string
-  ddd: string
-  number: string
-}
-interface Identification {
-  type: string
-  number: string
-}
-
-interface Department {
-  _id: string
-  name: string
-  branches: string[]
-}
-interface Role {
-  _id: string
-  name: string
-  permissions: string[]
-}
 interface CreateAgent {
   _id: number
   name: string
@@ -58,8 +41,8 @@ interface CreateAgent {
   role: string
   status: string
   email: string
-  phones: [Phone]
-  identification: [Identification]
+  phones: [PhoneInterface]
+  identification: [IdentificationInterface]
   birth_date: Date
 }
 interface DepartmentsData {
@@ -73,34 +56,67 @@ interface RolesData {
 const AgentSchema = Yup.object().shape({
   name: Yup.string()
     .min(3, 'Por favor, informe um nome com pelo menos 3 caracteres')
-    .required('Por favor, informe um nome'),
+    .required('Por favor, informe o nome do colaborador'),
   email: Yup.string()
-    .min(3, 'Por favor, informe um slug com pelo menos 3 caracteres')
-    .required('Por favor, informe um slug'),
-  department: Yup.string()
-    .min(3, 'Por favor, informe um slug com pelo menos 3 caracteres')
-    .required('Por favor, informe um slug'),
-  role: Yup.string()
-    .min(3, 'Por favor, informe um slug com pelo menos 3 caracteres')
-    .required('Por favor, informe um slug'),
-  branch: Yup.string()
-    .min(3, 'Por favor, informe um slug com pelo menos 3 caracteres')
-    .required('Por favor, informe um slug'),
-  status: Yup.string().required('Por favor, informe um slug'),
+    .email('Por favor, informe um email válido')
+    .required('Por favor, informe um email '),
+  department: Yup.string().required('Por favor, selecione um departamento'),
+  role: Yup.string().required('Por favor, selecione um cargo'),
+  branch: Yup.string().required('Por favor, selecione uma unidade'),
+  status: Yup.string().required('Por favor, selecione o status'),
   birth_date: Yup.date()
-    .transform((value, originalValue) => parse(originalValue, 'dd/MM/yyyy', new Date()))
-    .required('Por favor, informe um slug'),
+    .transform((value, originalValue) => parse(originalValue, 'dd/mm/yyyy', new Date()))
+    .typeError('Por favor, informe uma data de nascimento válida')
+    .required('Por favor, informe a data de nascimento'),
   phones: Yup.array().of(
     Yup.object().shape({
-      ddi: Yup.string().required('Digite o DDI.'),
-      ddd: Yup.string().required('Digite o DDD.'),
-      number: Yup.string().required('Digite o número'),
+      ddi: Yup.string()
+        .transform((value, originalValue) => originalValue.replace('+', '').replace('x', ''))
+        .min(2, 'Digite um DDI válido')
+        .required('Digite o DDI.'),
+      ddd: Yup.string()
+        .transform((value, originalValue) =>
+          originalValue.replace('(', '').replace(')', '').replace('x', '')
+        )
+        .min(2, 'Digite um DDD válido')
+        .required('Digite o DDD.'),
+      number: Yup.string()
+        .transform((value, originalValue) =>
+          originalValue.replace('-', '').replace(' ', '').replace('x', '')
+        )
+        .min(9, 'Digite um número válido')
+        .required('Digite o número'),
     })
   ),
   identification: Yup.array().of(
     Yup.object().shape({
       type: Yup.string().required('Por favor, informe um slug'),
-      number: Yup.string().required('Por favor, informe um slug'),
+      number: Yup.string().when('type', type => {
+        if (type === 'CPF') {
+          return Yup.string()
+            .transform(value =>
+              value
+                .split('')
+                .filter((char: string) => char !== '-' && char !== '.' && char !== 'x')
+                .join('')
+            )
+            .min(11, 'Digite um CPF válido')
+            .required('Por favor, informe um CPF')
+        }
+        if (type === 'RG') {
+          return Yup.string()
+            .transform(value => value.replace('x', ''))
+            .min(10, 'Digite um RG válido')
+            .required('Por favor, informe um RG')
+        }
+        if (type === 'CNH') {
+          return Yup.string()
+            .transform(value => value.replace('x', ''))
+            .min(11, 'Digite uma CNH válida')
+            .required('Por favor, informe uma CNH')
+        }
+        return Yup.string()
+      }),
     })
   ),
 })
@@ -112,7 +128,7 @@ const CreateAgent: React.FC = () => {
   const { data: roles } = useSWR<RolesData>('http://localhost:3000/roles/', fetcher)
   const form = useFormik({
     validateOnChange: false,
-    validateOnMount: true,
+    validateOnMount: false,
     validateOnBlur: true,
     initialValues: {
       name: '',
@@ -134,7 +150,10 @@ const CreateAgent: React.FC = () => {
     },
     validationSchema: AgentSchema,
     onSubmit: async values => {
-      await axios.post('http://localhost:3000/agents/', values)
+      const dateParts = values.birth_date.split('/')
+      const validDate = `${dateParts[1]}/${dateParts[0]}/${dateParts[2]}`
+      const newValues = { ...values, birth_date: validDate }
+      await axios.post('http://localhost:3000/agents/', newValues)
     },
   })
   useEffect(() => {
@@ -144,19 +163,26 @@ const CreateAgent: React.FC = () => {
     resetBranchValue()
   }, [form.values.department])
 
-  const handlePhoneInputErrorMessage = (index:number) => {
-    let errorMessage = ''
-    if(!form.errors.phones?.[index]){
+  const handleIdentificationErrorMessage = (index: number) => {
+    if (!form.errors.identification?.[index]) {
       return ''
     }
-    if((form.errors.phones[index] as Phone).ddi){
-      errorMessage += (form.errors.phones[index] as Phone).ddi
+    return (form.errors.identification[index] as IdentificationInterface).number
+  }
+  const handlePhoneInputErrorMessage = (index: number) => {
+    let errorMessage = ''
+    if (!form.errors.phones?.[index]) {
+      return ''
     }
-    if((form.errors.phones[index] as Phone).ddd){
-      errorMessage += (form.errors.phones[index] as Phone).ddd
+    const convertToPhone = form.errors.phones[index] as PhoneInterface
+    if (convertToPhone.ddi) {
+      errorMessage += convertToPhone.ddi + ' '
     }
-    if((form.errors.phones[index] as Phone).number){
-      errorMessage += (form.errors.phones[index] as Phone).number
+    if (convertToPhone.ddd) {
+      errorMessage += convertToPhone.ddd + ' '
+    }
+    if (convertToPhone.number) {
+      errorMessage += convertToPhone.number
     }
     return errorMessage
   }
@@ -170,15 +196,9 @@ const CreateAgent: React.FC = () => {
         </PageTitleWrapper>
         <Content>
           <form onSubmit={form.handleSubmit}>
-            <UserContainer>
-              <UserImage>
-                <User />
-              </UserImage>
-              <UserData>
-                <Username></Username>
-                <Email></Email>
-              </UserData>
-            </UserContainer>
+            <UserImage>
+              <User />
+            </UserImage>
             <SectionTitle>Informações pessoais</SectionTitle>
             <InputsWrapper>
               <Input
@@ -201,60 +221,52 @@ const CreateAgent: React.FC = () => {
                 errorMessage={form.errors.email}
                 onBlur={form.handleBlur}
               />
-              <Input
+              <MaskedInput
+                mask='Data'
                 id='nascimento-input'
                 name='birth_date'
                 label='Data de nascimento'
-                onChange={form.handleChange}
                 value={form.values.birth_date}
                 placeholder='Insire a data de nascimento do colaborador'
                 errorMessage={form.errors.birth_date}
+                onChange={form.handleChange}
                 onBlur={form.handleBlur}
               />
             </InputsWrapper>
             <SectionTitle>Documentos</SectionTitle>
 
             <InputsWrapper>
-              <Input
+              <MaskedInput
+                mask='CPF'
                 id='cpf-input'
                 name={`identification.${[0]}.number`}
                 label='CPF'
                 onChange={form.handleChange}
                 value={form.values.identification[0].number}
                 placeholder='Insire o CPF do colaborador'
-                errorMessage={
-                  form.errors.identification?.[0]
-                    ? (form.errors.identification[0] as Identification).number
-                    : ''
-                }
+                errorMessage={handleIdentificationErrorMessage(0)}
                 onBlur={form.handleBlur}
               />
-              <Input
+              <MaskedInput
+                mask='RG'
                 id='rg-input'
                 name={`identification.${[1]}.number`}
                 label='RG'
                 placeholder='Insire o RG do colaborador'
                 onChange={form.handleChange}
                 value={form.values.identification[1].number}
-                errorMessage={
-                  form.errors.identification?.[1]
-                    ? (form.errors.identification[1] as Identification).number
-                    : ''
-                }
+                errorMessage={handleIdentificationErrorMessage(1)}
                 onBlur={form.handleBlur}
               />
-              <Input
+              <MaskedInput
+                mask='CNH'
                 id='cnh-input'
                 name={`identification.${[2]}.number`}
                 label='Carteira de motorista'
                 onChange={form.handleChange}
                 value={form.values.identification[2].number}
-                placeholder='Insire o n° da CNH do colaborador'
-                errorMessage={
-                  form.errors.identification?.[2]
-                    ? (form.errors.identification[2] as Identification).number
-                    : ''
-                }
+                placeholder='Insire o n° de registro da CNH do colaborador'
+                errorMessage={handleIdentificationErrorMessage(2)}
                 onBlur={form.handleBlur}
               />
             </InputsWrapper>
@@ -295,6 +307,8 @@ const CreateAgent: React.FC = () => {
                     label='Departamento'
                     bgColor='#F5FAF8'
                     onChange={form.handleChange}
+                    errorMessage={form.errors.department}
+                    onBlur={form.handleBlur}
                   >
                     {departments &&
                       departments.results.map(dept => (
@@ -303,7 +317,14 @@ const CreateAgent: React.FC = () => {
                         </Select.Option>
                       ))}
                   </Select>
-                  <Select name='role' label='Cargo' bgColor='#F5FAF8' onChange={form.handleChange}>
+                  <Select
+                    name='role'
+                    label='Cargo'
+                    bgColor='#F5FAF8'
+                    onChange={form.handleChange}
+                    errorMessage={form.errors.role}
+                    onBlur={form.handleBlur}
+                  >
                     {roles &&
                       roles.results.map(role => (
                         <Select.Option value={role.name} key={role._id}>
@@ -318,6 +339,8 @@ const CreateAgent: React.FC = () => {
                     label='Unidade'
                     bgColor='#F5FAF8'
                     onChange={form.handleChange}
+                    errorMessage={form.errors.branch}
+                    onBlur={form.handleBlur}
                   >
                     {departments &&
                       form.values.department !== '' &&
@@ -334,6 +357,8 @@ const CreateAgent: React.FC = () => {
                     label='Status'
                     onChange={form.handleChange}
                     bgColor='#F5FAF8'
+                    errorMessage={form.errors.status}
+                    onBlur={form.handleBlur}
                   >
                     <Select.Option value='active'>Ativo</Select.Option>
                     <Select.Option value='inactive'>Inativo</Select.Option>
@@ -341,7 +366,7 @@ const CreateAgent: React.FC = () => {
                 </SelectsRow>
               </SelectsContainerWrapper>
             </SectionOrganizationalData>
-            <button type='submit'>Criar</button>
+            <Button type='submit'>Criar</Button>
           </form>
         </Content>
       </Layout>

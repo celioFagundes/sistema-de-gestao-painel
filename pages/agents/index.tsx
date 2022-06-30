@@ -25,6 +25,7 @@ import {
   DotsIcon,
 } from '../../styles/agents'
 import { PageTitle, SectionTitle } from '../../styles/texts'
+import { Agent } from '../../types/agent'
 
 const SORT_OPTIONS = [
   { name: 'Nome completo', value: 'name' },
@@ -33,15 +34,7 @@ const SORT_OPTIONS = [
   { name: 'Unidade', value: 'branch' },
   { name: 'Status', value: 'status' },
 ]
-interface Agent {
-  _id: string
-  name: string
-  image: string
-  department: string
-  branch: string
-  role: string
-  status: string
-}
+
 interface DataProps {
   results: {
     docs: [Agent]

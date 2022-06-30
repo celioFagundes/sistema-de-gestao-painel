@@ -59,6 +59,7 @@ export const SectionOrganizationalData = styled.section`
 export const SelectsContainerWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr;
+
   grid-gap: 24px;
 `
 
@@ -66,7 +67,7 @@ export const SelectsRow = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   grid-gap: 24px;
   @media (max-width: 768px) {
     grid-template-columns: 1fr;

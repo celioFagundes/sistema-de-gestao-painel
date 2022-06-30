@@ -1,5 +1,14 @@
-import React, { ChangeEventHandler } from 'react'
-import { Label, OptionLabel, Selection, Wrapper } from './styles'
+import React, { ChangeEventHandler, FocusEventHandler } from 'react'
+import { BiError } from 'react-icons/bi'
+import {
+  ErrorContainer,
+  ErrorIcon,
+  ErrorMessage,
+  Label,
+  OptionLabel,
+  Selection,
+  Wrapper,
+} from './styles'
 
 type Props = {
   label: string
@@ -7,6 +16,8 @@ type Props = {
   bgColor?: string
   name: string
   onChange: ChangeEventHandler<HTMLSelectElement>
+  onBlur?:  FocusEventHandler<HTMLSelectElement>
+  errorMessage?: string
 }
 
 type OptionProps = {
@@ -18,6 +29,7 @@ const Select = (props: Props) => {
     <Wrapper>
       <Label htmlFor='select'>{props.label}</Label>
       <Selection
+        onBlur={props.onBlur}
         onChange={props.onChange}
         name={props.name}
         id='select'
@@ -29,6 +41,14 @@ const Select = (props: Props) => {
         </option>
         {props.children}
       </Selection>
+      {props.errorMessage && (
+        <ErrorContainer>
+          <ErrorIcon>
+            <BiError />
+          </ErrorIcon>
+          <ErrorMessage>{props.errorMessage}</ErrorMessage>
+        </ErrorContainer>
+      )}
     </Wrapper>
   )
 }

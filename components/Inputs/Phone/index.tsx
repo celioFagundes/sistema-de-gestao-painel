@@ -1,5 +1,6 @@
 import { ChangeEventHandler, FocusEventHandler } from 'react'
 import { BiError } from 'react-icons/bi'
+import NumberFormat from 'react-number-format'
 import {
   Wrapper,
   Label,
@@ -31,7 +32,10 @@ const PhoneInput = (props: Props) => {
       <Container>
         <InputContainer>
           <Label htmlFor='ddi'>DDI</Label>
-          <DDI
+          <NumberFormat
+            customInput={DDI}
+            format = '+##'
+            mask = {['x','x']}
             id='ddi'
             name={props.ddiName}
             onChange={props.onChange}
@@ -42,7 +46,10 @@ const PhoneInput = (props: Props) => {
         </InputContainer>
         <InputContainer>
           <Label htmlFor='ddd'>DDD</Label>
-          <DDD
+          <NumberFormat
+            customInput={DDD}
+            format = '(##)'
+            mask = {['x','x']}
             id='ddd'
             name={props.dddName}
             onChange={props.onChange}
@@ -53,7 +60,10 @@ const PhoneInput = (props: Props) => {
         </InputContainer>
         <InputContainer>
           <Label htmlFor='phone-number'>Número</Label>
-          <Number
+          <NumberFormat
+            customInput={Number}
+            format = '# ####-####'
+            mask = {['x','x','x','x','x','x','x','x','x']}
             id='phone-number'
             name={props.numberName}
             onChange={props.onChange}

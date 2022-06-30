@@ -24,32 +24,11 @@ import {
 import { PageTitle, SectionTitle } from '../../../styles/texts'
 import { User, ID, Phone, Calendar } from '../../../components/Icons'
 import { useRouter } from 'next/router'
+import { AgentDetails } from '../../../types/agent'
 
-interface Phone {
-  ddd: number
-  ddi: number
-  number: number
-}
-interface Identification {
-  type: string
-  number: number
-}
-interface Agent {
-  _id: number
-  name: string
-  image: string
-  department: string
-  branch: string
-  role: string
-  status: boolean
-  email: string
-  phones: [Phone]
-  identification: [Identification]
-  birth_date: Date
-}
 
 interface DataProps {
-  agent: Agent
+  agent: AgentDetails
   success: boolean
 }
 const Agent: React.FC = () => {
