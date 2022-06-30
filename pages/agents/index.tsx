@@ -10,7 +10,7 @@ import { TableDrop } from '../../components/Tables'
 import { SearchInput } from '../../components/Inputs/'
 import { PageSwitcher, RecordsPerPageSelect } from '../../components/Pagination/'
 import { NavigationTabs, NavigationSelect, NavigateButton } from '../../components/Navigation/'
-import { ActionsModal, Action, MobileActionsToggle } from '../../components/ActionsModal'
+import { ActionsModal,  MobileActionsToggle, ActionLink, ActionButton } from '../../components/ActionsModal'
 import { SortSelect, SortButton } from '../../components/Sorting/'
 import {
   AvatarNameContainer,
@@ -26,6 +26,7 @@ import {
 } from '../../styles/agents'
 import { PageTitle, SectionTitle } from '../../styles/texts'
 import { Agent } from '../../types/agent'
+import axios from 'axios'
 
 const SORT_OPTIONS = [
   { name: 'Nome completo', value: 'name' },
@@ -57,13 +58,13 @@ interface IsOpenList {
 
 const Agents: React.FC = ({}) => {
   const [queryOptions, setQueryOptions] = useState({
-    limit: 10,
+    limit: 2,
     page: 1,
     field: '_id',
     criteria: 'asc',
     slug: '',
   })
-  const { data, error } = useSWR<DataProps>(
+  const { data, error,mutate } = useSWR<DataProps>(
     `http://localhost:3000/agents/?page=${queryOptions.page}&limit=${queryOptions.limit}&field=${queryOptions.field}&criteria=${queryOptions.criteria}&slug=${queryOptions.slug}`,
     fetcher
   )
@@ -85,6 +86,16 @@ const Agents: React.FC = ({}) => {
     createActiveStatusList()
   }, [data])
 
+  const removeAgent = async(id:string) =>{
+    await axios.delete(`http://localhost:3000/agents/${id}`)
+    if(data && data.results.docs.length === 1){
+      if(queryOptions.page > 1){
+        setQueryOptions({...queryOptions, page: queryOptions.page - 1})
+      }
+    }
+    await mutate()
+    
+  }
   const handleNextPage = () => {
     if (data && data.results.hasNextPage) {
       let nextPage = queryOptions.page + 1
@@ -277,12 +288,12 @@ const Agents: React.FC = ({}) => {
                           isOpen={modalIsOpenList[agent._id]}
                           closeFn={closeAnyActiveActionsModal}
                         >
-                          <Action url={`/agents/${agent._id}`} isActive={true} icon={Eye}>
+                          <ActionLink url={`/agents/${agent._id}`} isActive={true} icon={Eye}>
                             Ver colaborador
-                          </Action>
-                          <Action url={'/agents/1'} isActive={false} icon={Trash}>
+                          </ActionLink>
+                          <ActionButton onClick={() => removeAgent(agent._id)} isActive={true} icon={Trash}>
                             Excluir
-                          </Action>
+                          </ActionButton>
                         </ActionsModal>
                         <MobileActionsToggle onClick={() => toggleOptionsModal(agent._id)} />
                       </TableDrop.Td>

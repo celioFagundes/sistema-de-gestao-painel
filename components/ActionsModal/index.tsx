@@ -1,12 +1,13 @@
 import Link from 'next/link'
 import React from 'react'
+import { AiOutlineTransaction } from 'react-icons/ai'
 import { FilePlus } from '../Icons'
 import {
   ModalBackground,
   Content,
   ActionContainer,
   ActionIcon,
-  ActionLink,
+  Action,
   ToggleWrapper,
   ToggleLabel,
 } from './styles'
@@ -17,9 +18,15 @@ type Props = {
   closeFn?: () => void
 }
 
-interface Options {
+interface LinkOptions {
   children: React.ReactNode
   url: string
+  icon: React.FC
+  isActive: boolean
+}
+interface ButtonOptions {
+  children: React.ReactNode
+  onClick: () => void
   icon: React.FC
   isActive: boolean
 }
@@ -38,16 +45,31 @@ const ActionsModal = (props: Props) => {
   )
 }
 
-const Action = (props: Options) => {
+const ActionLink = (props: LinkOptions) => {
   return (
     <Link href={props.url}>
       <ActionContainer isActive={props.isActive}>
         <ActionIcon>
           <props.icon />
         </ActionIcon>
-        <ActionLink isActive={props.isActive}>{props.children}</ActionLink>
+        <Action isActive={props.isActive}>{props.children}</Action>
       </ActionContainer>
     </Link>
+  )
+}
+const ActionButton = (props: ButtonOptions) => {
+  const handleOnClick = () =>{
+    if(props.isActive){
+      props.onClick()
+    }
+  }
+  return (
+      <ActionContainer isActive={props.isActive} onClick = {handleOnClick}>
+        <ActionIcon>
+          <props.icon />
+        </ActionIcon>
+        <Action isActive={props.isActive}>{props.children}</Action>
+      </ActionContainer>
   )
 }
 
@@ -63,4 +85,4 @@ const MobileActionsToggle = (props: ActionsToggle) => {
   )
 }
 
-export { ActionsModal, Action, MobileActionsToggle }
+export { ActionsModal, ActionLink,ActionButton, MobileActionsToggle }

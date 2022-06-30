@@ -68,7 +68,7 @@ export const ActionIcon = styled.div`
   
   
 `
-export const ActionLink = styled.a<IsActive>`
+export const Action = styled.a<IsActive>`
   width: 140px;
   color: ${props => (props.isActive ? '#587169' : '#A3B8B0')};
   font-style: normal;
