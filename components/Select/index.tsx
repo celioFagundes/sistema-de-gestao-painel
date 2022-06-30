@@ -14,8 +14,8 @@ type Props = {
   label: string
   children: React.ReactNode
   bgColor?: string
-  name: string
-  onChange: ChangeEventHandler<HTMLSelectElement>
+  name?: string
+  onChange?: ChangeEventHandler<HTMLSelectElement>
   onBlur?:  FocusEventHandler<HTMLSelectElement>
   errorMessage?: string
 }

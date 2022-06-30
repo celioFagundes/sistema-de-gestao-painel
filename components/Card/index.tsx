@@ -83,7 +83,7 @@ const CardPhones = (props: CardPhoneProps) => {
       </Icon>
       <DataWrapper>
         <DataTitle>Telefone</DataTitle>
-        <Data>+{props.data[index].ddi + ' '+ props.data[index].ddd +' '+ props.data[index].number}</Data>
+        <Data>{props.data[index].ddi + ' '+ props.data[index].ddd +' '+ props.data[index].number}</Data>
       </DataWrapper>
       <ButtonsWrapper>
         <SwitchButton onClick={decreaseIndex} isDisabled={index === 0}>

@@ -2,9 +2,8 @@ import Image from 'next/image'
 import Seo from '../../../components/Seo'
 import useSWR from 'swr'
 import { fetcher } from '../../../lib/fetcher'
-
 import Layout from '../../../components/Layout'
-import BackButton from '../../../components/Navigation/BackButton'
+import {BackButton} from '../../../components/Navigation/'
 import { Card, CardIdentification, CardPhones } from '../../../components/Card'
 import Select from '../../../components/Select'
 
