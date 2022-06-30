@@ -3,9 +3,8 @@ import Seo from '../../../components/Seo'
 import useSWR from 'swr'
 import { fetcher } from '../../../lib/fetcher'
 import Layout from '../../../components/Layout'
-import {BackButton} from '../../../components/Navigation/'
-import { Card, CardIdentification, CardPhones } from '../../../components/Card'
-import Select from '../../../components/Select'
+import { BackButton } from '../../../components/Navigation/'
+import { Card, CardIdentification, CardPhone, CardWithLabel } from '../../../components/Cards'
 
 import {
   PageTitleWrapper,
@@ -16,15 +15,14 @@ import {
   Email,
   CardsWrapper,
   SectionOrganizationalData,
-  SelectsContainerWrapper,
-  SelectsRow,
   UserImage,
+  OrganizationalCardsWrapper,
+  OrganizationalCardsRow,
 } from '../../../styles/agents/details'
 import { PageTitle, SectionTitle } from '../../../styles/texts'
-import { User, ID, Phone, Calendar } from '../../../components/Icons'
+import { User, Calendar } from '../../../components/Icons'
 import { useRouter } from 'next/router'
 import { AgentDetails } from '../../../types/agent'
-
 
 interface DataProps {
   agent: AgentDetails
@@ -72,7 +70,7 @@ const Agent: React.FC = () => {
             <SectionTitle>Informações pessoais</SectionTitle>
             <CardsWrapper>
               <CardIdentification data={data.agent.identification} />
-              <CardPhones data={data.agent.phones} />
+              <CardPhone data={data.agent.phones} />
               <Card
                 Icon={Calendar}
                 dataTitle='Nascimento'
@@ -81,24 +79,19 @@ const Agent: React.FC = () => {
             </CardsWrapper>
             <SectionOrganizationalData>
               <SectionTitle>Dados Organizacionais</SectionTitle>
-              <SelectsContainerWrapper>
-                <SelectsRow>
-                  <Select label='Departamento' bgColor='#F5FAF8'>
-                    <Select.Option>Comercial</Select.Option>
-                  </Select>
-                  <Select label='Cargo' bgColor='#F5FAF8'>
-                    <Select.Option>Gerente</Select.Option>
-                  </Select>
-                </SelectsRow>
-                <SelectsRow>
-                  <Select label='Unidade' bgColor='#F5FAF8'>
-                    <Select.Option>Unidade 1</Select.Option>
-                  </Select>
-                  <Select label='Status' bgColor='#F5FAF8'>
-                    <Select.Option>Ativo</Select.Option>
-                  </Select>
-                </SelectsRow>
-              </SelectsContainerWrapper>
+              <OrganizationalCardsWrapper>
+                <OrganizationalCardsRow>
+                  <CardWithLabel dataTitle='Departmento' data={data.agent.department} />
+                  <CardWithLabel dataTitle='Cargo' data={data.agent.role} />
+                </OrganizationalCardsRow>
+                <OrganizationalCardsRow>
+                  <CardWithLabel dataTitle='Unidade' data={data.agent.branch} />
+                  <CardWithLabel
+                    dataTitle='Status'
+                    data={data.agent.status === 'active' ? 'Ativo' : 'Inativo'}
+                  />
+                </OrganizationalCardsRow>
+              </OrganizationalCardsWrapper>
             </SectionOrganizationalData>
           </Content>
         )}

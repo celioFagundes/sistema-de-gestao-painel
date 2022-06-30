@@ -14,7 +14,7 @@ interface AgentDetails {
   department: string
   branch: string
   role: string
-  status: boolean
+  status: string
   email: string
   phones: [PhoneInterface]
   identification: [IdentificationInterface]

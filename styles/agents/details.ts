@@ -56,14 +56,14 @@ export const SectionOrganizationalData = styled.section`
   border-radius: 8px;
   margin: 40px 0;
 `
-export const SelectsContainerWrapper = styled.div`
+export const OrganizationalCardsWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr;
 
   grid-gap: 24px;
 `
 
-export const SelectsRow = styled.div`
+export const OrganizationalCardsRow = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   justify-content: space-between;

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { BoldText, LightText } from '../../styles/texts'
+import { BoldText, LightText } from '../../../styles/texts'
 
 type buttonProps = {
   isDisabled: boolean

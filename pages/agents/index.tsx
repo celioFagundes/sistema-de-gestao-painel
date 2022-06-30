@@ -58,7 +58,7 @@ interface IsOpenList {
 
 const Agents: React.FC = ({}) => {
   const [queryOptions, setQueryOptions] = useState({
-    limit: 2,
+    limit: 10,
     page: 1,
     field: '_id',
     criteria: 'asc',
