@@ -230,11 +230,11 @@ const Departments: React.FC = ({}) => {
                           isOpen={modalIsOpenList[department._id]}
                           closeFn={closeAnyActiveActionsModal}
                         >
-                          <ActionLink url={`/agents/${department._id}`} isActive={true} icon={Eye}>
+                          <ActionLink url={`/departments/${department._id}`} isActive={true} icon={Eye}>
                             Ver departamento
                           </ActionLink>
                           <ActionLink
-                            url={`/agents/${department._id}/edit`}
+                            url={`/departments/${department._id}/edit`}
                             isActive={true}
                             icon={Edit}
                           >
