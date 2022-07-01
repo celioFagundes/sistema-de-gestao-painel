@@ -1,40 +1,44 @@
-
+import Image from 'next/image'
 import Seo from '../../../components/Seo'
 import * as Yup from 'yup'
-import { useFormik } from 'formik'
+import { FieldArray, FormikProvider, useFormik } from 'formik'
 
 import Layout from '../../../components/Layout'
 import { BackButton } from '../../../components/Navigation/'
-import { CheckboxInput, } from '../../../components/Inputs'
+import { Input } from '../../../components/Inputs'
 
 import { PageTitle, SectionTitle } from '../../../styles/texts'
-import {
-  PageTitleWrapper,
-  Content,
-  InputsWrapper,
+import { PageTitleWrapper, Content, InputsWrapper } from '../../../styles/agents/create'
 
-} from '../../../styles/agents/create'
-import useSWR from 'swr'
-import { fetcher } from '../../../lib/fetcher'
 import axios from 'axios'
-import { Department } from '../../../types/department'
 import { Button } from '../../../components/Buttons'
 import { useRouter } from 'next/router'
+import { BranchWrapper, SectionBranches } from '../../../styles/departments/create'
+import { InputWithDelete } from '../../../components/Inputs/InputWithDelete'
+import { Role } from '../../../types/role'
+import useSWR from 'swr'
+import { fetcher } from '../../../lib/fetcher'
 import { useEffect } from 'react'
-
-interface DepartmentsData {
-  department: Department
-  success: boolean
-}
+import { Department } from '../../../types/department'
 
 const DepartmentSchema = Yup.object().shape({
   name: Yup.string()
     .min(3, 'Por favor, informe um nome com pelo menos 3 caracteres')
     .required('Por favor, informe o nome do departmento'),
+  branches: Yup.array().of(
+    Yup.string()
+      .min(5, 'Informe uma unidade com no minimo 5 caracteres')
+      .required('Por favor informe o nome da unidade')
+  ),
 })
+
+interface DepartmentData {
+  department: Department
+  success: boolean
+}
 const EditDepartment: React.FC = () => {
   const router = useRouter()
-  const { data: departmentData, error } = useSWR<DepartmentsData>(
+  const { data: departmentData, error } = useSWR<DepartmentData>(
     router.query.id ? `http://localhost:3000/departments/${router.query.id}` : null,
     fetcher
   )
@@ -44,11 +48,12 @@ const EditDepartment: React.FC = () => {
     validateOnBlur: true,
     initialValues: {
       name: '',
+      branches: [''],
     },
     validationSchema: DepartmentSchema,
     onSubmit: async values => {
-      const createData = await axios.post('http://localhost:3000/departments/', values)
-      if (createData.status) {
+      const updateData = await axios.put(`http://localhost:3000/departments/${router.query.id}`, values)
+      if (updateData.status) {
         router.push('/departments')
       }
     },
@@ -56,26 +61,27 @@ const EditDepartment: React.FC = () => {
 
   useEffect(() => {
     const fillFormFields = () => {
-      if (!departmentData || departmentData.department) {
+      if (!departmentData|| !departmentData?.department) {
         return null
       }
       form.setFieldValue('name', departmentData.department.name)
+      form.setFieldValue('branches', departmentData.department.branches)
     }
     fillFormFields()
   }, [departmentData])
   return (
     <>
-      <Seo title='Criar novo departamento' description='Criar novo departamento' />
+      <Seo title='Editar departamento' description='Editar departamento' />
       <Layout>
         <PageTitleWrapper>
-          <BackButton url='/departament' />
-          <PageTitle>Criar novo departamento</PageTitle>
+          <BackButton url='/departments' />
+          <PageTitle>Editar departamento</PageTitle>
         </PageTitleWrapper>
         <Content>
           <form onSubmit={form.handleSubmit}>
             <SectionTitle>Informações do departamento</SectionTitle>
             <InputsWrapper>
-              <CheckboxInput
+              <Input
                 id='name-input'
                 name='name'
                 label='Nome'
@@ -85,8 +91,38 @@ const EditDepartment: React.FC = () => {
                 errorMessage={form.errors.name}
                 onBlur={form.handleBlur}
               />
-            </InputsWrapper>
-            <Button type='submit'>Criar</Button>
+            </InputsWrapper>  
+            <FormikProvider value={form}>
+              <FieldArray
+                name='branches'
+                render={arrayHelpers => {
+                  return (
+                    <SectionBranches>
+                      <SectionTitle>Unidades</SectionTitle>
+                      <Button type='button' onClick={() => arrayHelpers.push('')}>
+                        Adicionar nova unidade
+                      </Button>
+                      {form.values.branches.map((branch, index) => (
+                        <BranchWrapper key={index}>
+                          <InputWithDelete
+                            id='branch-input'
+                            name={`branches.${index}`}
+                            label='Unidade'
+                            placeholder='Digite o nome da unidade'
+                            onChange={form.handleChange}
+                            onBlur={form.handleBlur}
+                            onClick = {() => arrayHelpers.remove(index)}
+                            value={form.values.branches[index]}
+                            errorMessage={form.errors?.branches && form.errors.branches[index]}
+                          />        
+                        </BranchWrapper>
+                      ))}
+                    </SectionBranches>
+                  )
+                }}
+              />
+            </FormikProvider>
+            <Button type='submit'>Confirmar alterações</Button>
           </form>
         </Content>
       </Layout>
