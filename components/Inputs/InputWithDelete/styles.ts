@@ -7,7 +7,6 @@ export const Wrapper = styled.div`
 export const Container = styled.div`
   position: relative;
   display: flex;
-  flex-direction: column;
   align-items: center;
   border: 2px solid #cad6d1;
   border-radius: 8px;
@@ -60,4 +59,24 @@ export const ErrorIcon = styled.div`
 export const ErrorMessage = styled(BoldText)`
   font-size: 12px;
   color: #fbaf00;
+`
+export const DeleteButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: max-content;
+  padding: 11px 5px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: bold;
+  color: #587169;
+  border: 0;
+  border-left: 2px solid #cad6d1;
+  transition: all 100ms ease-in-out;
+  &:hover{
+    cursor: pointer;
+  }
+  &:hover svg >path {
+    fill: #E85D75;
+  }   
 `

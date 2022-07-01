@@ -1,32 +1,36 @@
 import Seo from '../../../components/Seo'
 
 import Layout from '../../../components/Layout'
-import Table from '../../../components/Table'
-import BackButton from '../../../components/Navigation/BackButton'
-import Select from '../../../components/Select'
+import { Table } from '../../../components/Tables'
+import { BackButton } from '../../../components/Navigation/'
 
-import { SelectsRow, Content, PageTitleWrapper } from '../../../styles/roles/create'
+import { CardsRow, Content, PageTitleWrapper } from '../../../styles/roles/details'
 import { PageTitle, SectionTitle } from '../../../styles/texts'
-import CheckboxOn from '../../../components/Icons/CheckboxOn'
-import CheckboxOff from '../../../components/Icons/CheckboxOff'
+import { CheckboxOn, CheckboxOff } from '../../../components/Icons/'
 import useSWR from 'swr'
 import { fetcher } from '../../../lib/fetcher'
+import { useRouter } from 'next/router'
+import { CardWithLabel } from '../../../components/Cards'
 
-interface GroupRules {
-  role: string
-  permissions: [string]
+interface Permission {
+  area: string
+  enabled: [string]
 }
 interface Role {
   name: string
   department: string
-  grouprules: [GroupRules]
+  permissions: Permission[]
 }
 
 interface DataProps {
   role: Role
 }
 const Role: React.FC = () => {
-  const { data, error } = useSWR<DataProps>('https://pp-api-desafio.herokuapp.com/role/1', fetcher)
+  const router = useRouter()
+  const { data, error } = useSWR<DataProps>(
+    router.query.id ? `http://localhost:3000/roles/${router.query.id}` : null,
+    fetcher
+  )
   return (
     <>
       <Seo title='Criar novo cargo' description='Criação de um novo cargo' />
@@ -36,43 +40,43 @@ const Role: React.FC = () => {
           <PageTitle>Cargos e Permissôes</PageTitle>
         </PageTitleWrapper>
         <Content>
-          <SectionTitle>Dados do cargo</SectionTitle>
-          <SelectsRow>
-            <Select label='Departamento'>
-              <Select.Option>{data?.role.department}</Select.Option>
-            </Select>
-            <Select label='Cargo'>
-              <Select.Option>{data?.role.name}</Select.Option>
-            </Select>
-          </SelectsRow>
-          <SectionTitle>Listagem de permissões</SectionTitle>
           {data && (
-            <Table>
-              <Table.Header>
-                <Table.Row>
-                  <Table.Th>Cargo</Table.Th>
-                  <Table.Th>Ler</Table.Th>
-                  <Table.Th>Editar</Table.Th>
-                  <Table.Th>Excluir</Table.Th>
-                </Table.Row>
-              </Table.Header>
-              <Table.Body>
-                {data.role.grouprules.map(rule => (
-                  <Table.Row key={rule.role}>
-                    <Table.Td>{rule.role} </Table.Td>
-                    <Table.Td>
-                      {rule.permissions.includes('read') ? <CheckboxOn /> : <CheckboxOff />}
-                    </Table.Td>
-                    <Table.Td>
-                      {rule.permissions.includes('write') ? <CheckboxOn /> : <CheckboxOff />}
-                    </Table.Td>
-                    <Table.Td>
-                      {rule.permissions.includes('delete') ? <CheckboxOn /> : <CheckboxOff />}
-                    </Table.Td>
-                  </Table.Row>
-                ))}
-              </Table.Body>
-            </Table>
+            <>
+              <SectionTitle>Dados do cargo</SectionTitle>
+              <CardsRow>
+                <CardWithLabel dataTitle={'Cargo'} data={data.role.name} />
+                <CardWithLabel dataTitle={'Departamento'} data={data.role.department} />
+              </CardsRow>
+              <SectionTitle>Listagem de permissões</SectionTitle>
+              {data && (
+                <Table>
+                  <Table.Header>
+                    <Table.Row>
+                      <Table.Th>Cargo</Table.Th>
+                      <Table.Th>Ler</Table.Th>
+                      <Table.Th>Editar</Table.Th>
+                      <Table.Th>Excluir</Table.Th>
+                    </Table.Row>
+                  </Table.Header>
+                  <Table.Body>
+                    {data.role.permissions.map(rule => (
+                      <Table.Row key={rule.area}>
+                        <Table.Td>{rule.area} </Table.Td>
+                        <Table.Td>
+                          {rule.enabled.includes('read') ? <CheckboxOn /> : <CheckboxOff />}
+                        </Table.Td>
+                        <Table.Td>
+                          {rule.enabled.includes('write') ? <CheckboxOn /> : <CheckboxOff />}
+                        </Table.Td>
+                        <Table.Td>
+                          {rule.enabled.includes('delete') ? <CheckboxOn /> : <CheckboxOff />}
+                        </Table.Td>
+                      </Table.Row>
+                    ))}
+                  </Table.Body>
+                </Table>
+              )}
+            </>
           )}
         </Content>
       </Layout>

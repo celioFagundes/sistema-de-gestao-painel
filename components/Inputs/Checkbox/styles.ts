@@ -1,9 +1,7 @@
 import styled from '@emotion/styled'
-import { BoldText } from '../../../styles/texts'
+import { BoldText, } from '../../../styles/texts'
 
-export const Wrapper = styled.div`
-  margin: 10px 0;
-`
+export const Wrapper = styled.div``
 export const Container = styled.div`
   position: relative;
   display: flex;
@@ -45,19 +43,19 @@ export const InputElement = styled.input`
 `
 export const ErrorContainer = styled.div`
   display: flex;
-  justify-content: flex-start;
+  justify-content:flex-start;
   align-items: center;
-  margin-top: 3px;
+  margin-top:3px;
 `
 export const ErrorIcon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 14px;
-  color: #fbaf00;
-  margin-right: 5px;
+  color: #FBAF00;
+  margin-right:5px;
 `
 export const ErrorMessage = styled(BoldText)`
   font-size: 12px;
-  color: #fbaf00;
+  color: #FBAF00;
 `

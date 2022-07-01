@@ -19,17 +19,19 @@ import {
   Down,
   Up,
   Edit,
-  Repeat,
   MoreVertical,
-  CheckboxOn,
-  CheckboxOff,
+  Trash,
 } from '../../components/Icons/'
 import useSWR from 'swr'
 import { fetcher } from '../../lib/fetcher'
 import { Role } from '../../types/role'
 import { SortButton, SortSelect } from '../../components/Sorting'
+import axios from 'axios'
 
-const SORT_OPTIONS = [{ name: 'Cargo', value: 'name' }]
+const SORT_OPTIONS = [
+  { name: 'Cargo', value: 'name' },
+  { name: 'Departamento', value: 'department' },
+]
 interface DataProps {
   results: {
     docs: Role[]
@@ -65,6 +67,16 @@ const Roles: React.FC = () => {
   const [dropdownIsOpenList, setDropdownIsOpenList] = useState<IsOpenList>({})
   const [showNavigationModal, setShowNavigationModal] = useState(false)
   const [showSortSelect, setShowSortSelect] = useState(false)
+
+  const removeRole = async (id: string) => {
+    await axios.delete(`http://localhost:3000/roles/${id}`)
+    if (data && data.results.docs.length === 1) {
+      if (queryOptions.page > 1) {
+        setQueryOptions({ ...queryOptions, page: queryOptions.page - 1 })
+      }
+    }
+    await mutate()
+  }
   useEffect(() => {
     if (data) {
       const createActiveStatusList = () => {
@@ -155,6 +167,9 @@ const Roles: React.FC = () => {
             <NavigationTabs.Tab url='/roles' isActive={true}>
               Cargos
             </NavigationTabs.Tab>
+            <NavigationTabs.Tab url='/departments' isActive={false}>
+              Departamentos
+            </NavigationTabs.Tab>
           </NavigationTabs>
 
           <NavigationSelect
@@ -165,7 +180,7 @@ const Roles: React.FC = () => {
           />
           <SearchInput onSubmit={handleSearchInput} querySlug={queryOptions.slug} />
           <SectionTitle>Listagem de cargos e permissões</SectionTitle>
-          <NavigateButton url='/roles/create' label='Novo cargo'/>
+          <NavigateButton url='/roles/create' label='Novo cargo' />
           <SortSelect
             isOpen={showSortSelect}
             openFn={() => toggleSortSelectModal(true)}
@@ -180,7 +195,7 @@ const Roles: React.FC = () => {
             <>
               <TableDrop>
                 <TableDrop.Header>
-                  <TableDrop.Row numberOfColumns={5}>
+                  <TableDrop.Row numberOfColumns={3}>
                     <TableDrop.Th>
                       Cargo
                       <SortButton
@@ -189,16 +204,21 @@ const Roles: React.FC = () => {
                         selectedCriteria={queryOptions.criteria}
                       />
                     </TableDrop.Th>
-                    <TableDrop.Th>Ler</TableDrop.Th>
-                    <TableDrop.Th>Escrever</TableDrop.Th>
-                    <TableDrop.Th>Excluir</TableDrop.Th>
+                    <TableDrop.Th>
+                      Departamento
+                      <SortButton
+                        field='department'
+                        onClick={handleSortButton}
+                        selectedCriteria={queryOptions.criteria}
+                      />
+                    </TableDrop.Th>
                     <TableDrop.Th></TableDrop.Th>
                   </TableDrop.Row>
                 </TableDrop.Header>
                 <TableDrop.Body>
                   {data.results.docs.map(role => (
                     <TableDrop.Row
-                      numberOfColumns={5}
+                      numberOfColumns={3}
                       key={role._id}
                       isActive={dropdownIsOpenList[role._id]}
                       maxHeight={'78px'}
@@ -211,16 +231,11 @@ const Roles: React.FC = () => {
                         </DropdownIcon>
                       </TableDrop.Td>
                       <TableDrop.Td onClick={() => toggleDropdown(role._id)}>
-                        <Label>Ler</Label>
-                        {role.permissions.includes('read') ? <CheckboxOn /> : <CheckboxOff />}
-                      </TableDrop.Td>
-                      <TableDrop.Td onClick={() => toggleDropdown(role._id)}>
-                        <Label>Escrever</Label>
-                        {role.permissions.includes('write') ? <CheckboxOn /> : <CheckboxOff />}
-                      </TableDrop.Td>
-                      <TableDrop.Td onClick={() => toggleDropdown(role._id)}>
-                        <Label>Excluir</Label>
-                        {role.permissions.includes('delete') ? <CheckboxOn /> : <CheckboxOff />}
+                        <Label>Departamento</Label>
+                        <Value>{role.department}</Value>
+                        <DropdownIcon>
+                          {!dropdownIsOpenList[role._id] ? <Down /> : <Up />}
+                        </DropdownIcon>
                       </TableDrop.Td>
                       <TableDrop.Td>
                         <DotsIcon onClick={() => toggleOptionsModal(role._id)}>
@@ -233,10 +248,14 @@ const Roles: React.FC = () => {
                           <ActionLink url={`/roles/${role._id}`} isActive={true} icon={Eye}>
                             Ver cargo
                           </ActionLink>
-                          <ActionLink url={'/roles/1'} isActive={false} icon={Edit}>
+                          <ActionLink url={`/roles/${role._id}/edit`} isActive={true} icon={Edit}>
                             Editar
                           </ActionLink>
-                          <ActionButton onClick={() => ''} isActive={false} icon={Repeat}>
+                          <ActionButton
+                            onClick={() => removeRole(role._id)}
+                            isActive={true}
+                            icon={Trash}
+                          >
                             Excluir
                           </ActionButton>
                         </ActionsModal>

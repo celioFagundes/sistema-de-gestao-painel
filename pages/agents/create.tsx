@@ -7,7 +7,7 @@ import Layout from '../../components/Layout'
 import Select from '../../components/Select'
 import { BackButton } from '../../components/Navigation/'
 import { User } from '../../components/Icons'
-import { Input, PhoneInput } from '../../components/Inputs'
+import {  Input, PhoneInput } from '../../components/Inputs'
 
 import { PageTitle, SectionTitle } from '../../styles/texts'
 import {

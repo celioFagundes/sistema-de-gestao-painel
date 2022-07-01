@@ -7,7 +7,7 @@ import Layout from '../../../components/Layout'
 import Select from '../../../components/Select'
 import { BackButton } from '../../../components/Navigation/'
 import { User } from '../../../components/Icons'
-import {  Input, PhoneInput } from '../../../components/Inputs'
+import { CheckboxInput, PhoneInput } from '../../../components/Inputs'
 
 import { PageTitle, SectionTitle } from '../../../styles/texts'
 import {
@@ -123,7 +123,7 @@ const EditAgent: React.FC = () => {
     'http://localhost:3000/departments/',
     fetcher
   )
-  
+  const { data: roles } = useSWR<RolesData>('http://localhost:3000/roles/', fetcher)
   const form = useFormik({
     validateOnChange: false,
     validateOnMount: false,
@@ -157,10 +157,6 @@ const EditAgent: React.FC = () => {
       }
     },
   })
-  const { data: roles } = useSWR<RolesData>(
-    `http://localhost:3000/roles/?slug=${form.values.department}`,
-    fetcher
-  )
   useEffect(() => {
     const fillFormFields = () => {
       if (!agentData || !agentData?.agent) {
@@ -179,13 +175,12 @@ const EditAgent: React.FC = () => {
     fillFormFields()
   }, [agentData])
   useEffect(() => {
-    const resetBranchAndRoleValue = () => {
+    const resetBranchValue = () => {
       if (form.values.department !== agentData?.agent.department) {
         form.setFieldValue('branch', '')
-        form.setFieldValue('role', '')
       }
     }
-    resetBranchAndRoleValue()
+    resetBranchValue()
   }, [form.values.department])
 
   const handleIdentificationErrorMessage = (index: number) => {
@@ -227,7 +222,7 @@ const EditAgent: React.FC = () => {
               </UserImage>
               <SectionTitle>Informações pessoais</SectionTitle>
               <InputsWrapper>
-                <Input
+                <CheckboxInput
                   id='name-input'
                   name='name'
                   label='Nome Completo'
@@ -237,7 +232,7 @@ const EditAgent: React.FC = () => {
                   errorMessage={form.errors.name}
                   onBlur={form.handleBlur}
                 />
-                <Input
+                <CheckboxInput
                   id='email-input'
                   name='email'
                   label='Email'
@@ -326,7 +321,6 @@ const EditAgent: React.FC = () => {
 
               <SectionOrganizationalData>
                 <SectionTitle>Dados Organizacionais</SectionTitle>
-                {JSON.stringify(form.values, null, 2)}
                 <SelectsContainerWrapper>
                   <SelectsRow>
                     <Select

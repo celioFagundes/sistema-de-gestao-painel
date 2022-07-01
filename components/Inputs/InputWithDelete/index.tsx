@@ -7,8 +7,10 @@ import {
   Container,
   ErrorContainer,
   ErrorIcon,
+  DeleteButton,
 } from './styles'
 import { BiError } from 'react-icons/bi'
+import { Trash } from '../../Icons'
 type Props = {
   id: string
   label: string
@@ -18,9 +20,10 @@ type Props = {
   onChange: ChangeEventHandler<HTMLInputElement>
   onBlur?:  FocusEventHandler<HTMLInputElement>
   errorMessage?: string
+  onClick : () => void
 }
 
-const Input = (props: Props) => {
+const InputWithDelete = (props: Props) => {
   return (
     <Wrapper>
       <Container>
@@ -33,6 +36,9 @@ const Input = (props: Props) => {
           placeholder={props.placeholder}
           onBlur = {props.onBlur}
         />
+        <DeleteButton onClick={props.onClick}>
+          <Trash/>
+        </DeleteButton>
       </Container>
       {props.errorMessage && (
         <ErrorContainer>
@@ -47,4 +53,4 @@ const Input = (props: Props) => {
   )
 }
 
-export { Input  }
+export { InputWithDelete  }

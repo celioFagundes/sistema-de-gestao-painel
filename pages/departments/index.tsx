@@ -18,10 +18,6 @@ import {
 } from '../../components/ActionsModal'
 import { SortSelect, SortButton } from '../../components/Sorting/'
 import {
-  AvatarNameContainer,
-  ImageWrapper,
-  Name,
-  Status,
   BottomContainer,
   Content,
   DropdownIcon,
@@ -32,18 +28,13 @@ import {
 import { PageTitle, SectionTitle } from '../../styles/texts'
 import { Agent } from '../../types/agent'
 import axios from 'axios'
+import { Department } from '../../types/department'
 
-const SORT_OPTIONS = [
-  { name: 'Nome completo', value: 'name' },
-  { name: 'Departamento', value: 'department' },
-  { name: 'Cargo', value: 'role' },
-  { name: 'Unidade', value: 'branch' },
-  { name: 'Status', value: 'status' },
-]
+const SORT_OPTIONS = [{ name: 'Nome ', value: 'name' }]
 
 interface DataProps {
   results: {
-    docs: Agent[]
+    docs: Department[]
     hasNextPage: boolean
     hasPrevPage: boolean
     limit: number
@@ -61,7 +52,7 @@ interface IsOpenList {
   [key: string]: boolean
 }
 
-const Agents: React.FC = ({}) => {
+const Departments: React.FC = ({}) => {
   const [queryOptions, setQueryOptions] = useState({
     limit: 10,
     page: 1,
@@ -70,7 +61,7 @@ const Agents: React.FC = ({}) => {
     slug: '',
   })
   const { data, error, mutate } = useSWR<DataProps>(
-    `http://localhost:3000/agents/?page=${queryOptions.page}&limit=${queryOptions.limit}&field=${queryOptions.field}&criteria=${queryOptions.criteria}&slug=${queryOptions.slug}`,
+    `http://localhost:3000/departments/paginated/?page=${queryOptions.page}&limit=${queryOptions.limit}&field=${queryOptions.field}&criteria=${queryOptions.criteria}&slug=${queryOptions.slug}`,
     fetcher
   )
   const [modalIsOpenList, setModalIsOpenList] = useState<IsOpenList>({})
@@ -91,8 +82,8 @@ const Agents: React.FC = ({}) => {
     createActiveStatusList()
   }, [data])
 
-  const removeAgent = async (id: string) => {
-    await axios.delete(`http://localhost:3000/agents/${id}`)
+  const removeDepartment = async (id: string) => {
+    await axios.delete(`http://localhost:3000/departments/${id}`)
     if (data && data.results.docs.length === 1) {
       if (queryOptions.page > 1) {
         setQueryOptions({ ...queryOptions, page: queryOptions.page - 1 })
@@ -165,18 +156,18 @@ const Agents: React.FC = ({}) => {
   }
   return (
     <>
-      <Seo title='Colaboradores' description='Listagem dos colaboradores' />
+      <Seo title='Departamentos' description='Listagem dos departamentos' />
       <Layout>
         <PageTitle>Organização</PageTitle>
         <Content>
           <NavigationTabs>
-            <NavigationTabs.Tab url='/agents' isActive={true}>
+            <NavigationTabs.Tab url='/agents' isActive={false}>
               Colaboradores
             </NavigationTabs.Tab>
             <NavigationTabs.Tab url='/roles' isActive={false}>
               Cargos
             </NavigationTabs.Tab>
-            <NavigationTabs.Tab url='/departments' isActive={false}>
+            <NavigationTabs.Tab url='/departments' isActive={true}>
               Departamentos
             </NavigationTabs.Tab>
           </NavigationTabs>
@@ -184,11 +175,11 @@ const Agents: React.FC = ({}) => {
             isOpen={showNavigationModal}
             openFn={() => toggleNavigationModal(true)}
             closeFn={() => toggleNavigationModal(false)}
-            currentPage={'Colaboradores'}
+            currentPage={'Departamentos'}
           />
           <SearchInput onSubmit={handleSearchInput} querySlug={queryOptions.slug} />
-          <SectionTitle>Listagem de colaboradores</SectionTitle>
-          <NavigateButton url='/agents/create' label='Novo colaborador'/>
+          <SectionTitle>Listagem de departamentos</SectionTitle>
+          <NavigateButton url='/departments/create' label='Novo departamento' />
           <SortSelect
             isOpen={showSortSelect}
             openFn={() => toggleSortSelectModal(true)}
@@ -203,43 +194,11 @@ const Agents: React.FC = ({}) => {
             <>
               <TableDrop>
                 <TableDrop.Header>
-                  <TableDrop.Row numberOfColumns={7}>
-                    <TableDrop.Th gridSpan>
+                  <TableDrop.Row numberOfColumns={2}>
+                    <TableDrop.Th>
                       Nome Completo
                       <SortButton
                         field='name'
-                        onClick={handleSortButton}
-                        selectedCriteria={queryOptions.criteria}
-                      />
-                    </TableDrop.Th>
-                    <TableDrop.Th gridSpan>
-                      Departamento
-                      <SortButton
-                        field='department'
-                        onClick={handleSortButton}
-                        selectedCriteria={queryOptions.criteria}
-                      />
-                    </TableDrop.Th>
-                    <TableDrop.Th gridSpan>
-                      Cargo
-                      <SortButton
-                        field='role'
-                        onClick={handleSortButton}
-                        selectedCriteria={queryOptions.criteria}
-                      />
-                    </TableDrop.Th>
-                    <TableDrop.Th gridSpan>
-                      Unidade
-                      <SortButton
-                        field='branch'
-                        onClick={handleSortButton}
-                        selectedCriteria={queryOptions.criteria}
-                      />
-                    </TableDrop.Th>
-                    <TableDrop.Th gridSpan>
-                      Status
-                      <SortButton
-                        field='status'
                         onClick={handleSortButton}
                         selectedCriteria={queryOptions.criteria}
                       />
@@ -248,68 +207,48 @@ const Agents: React.FC = ({}) => {
                   </TableDrop.Row>
                 </TableDrop.Header>
                 <TableDrop.Body>
-                  {data.results.docs.map(agent => (
+                  {data.results.docs.map(department => (
                     <TableDrop.Row
-                      numberOfColumns={7}
-                      key={agent._id}
-                      isActive={dropdownIsOpenList[agent._id]}
-                      status={agent.status}
-                      maxHeight={'95px'}
+                      numberOfColumns={2}
+                      key={department._id}
+                      isActive={dropdownIsOpenList[department._id]}
+                      status={'ativo'}
+                      maxHeight={'75px'}
                     >
-                      <TableDrop.Td onClick={() => toggleDropdown(agent._id)} gridSpan>
-                        <Label>Nome Completo</Label>
-                        <AvatarNameContainer>
-                          <ImageWrapper
-                            style={{ position: 'relative', minHeight: '32px', minWidth: '32px' }}
-                          ></ImageWrapper>
-                          <Name>{agent.name}</Name>
-                        </AvatarNameContainer>
+                      <TableDrop.Td onClick={() => toggleDropdown(department._id)}>
+                        <Label>Nome</Label>    
+                        <Value>{department.name}</Value>             
                         <DropdownIcon>
-                          {!dropdownIsOpenList[agent._id] ? <Down /> : <Up />}
+                          {!dropdownIsOpenList[department._id] ? <Down /> : <Up />}
                         </DropdownIcon>
                       </TableDrop.Td>
                       <TableDrop.Td>
-                        <Label>Departamento</Label>
-                        <Value>{agent.department}</Value>
-                      </TableDrop.Td>
-                      <TableDrop.Td>
-                        <Label>Cargo</Label>
-                        <Value>{agent.role}</Value>
-                      </TableDrop.Td>
-                      <TableDrop.Td>
-                        <Label>Unidade</Label>
-                        <Value>{agent.branch}</Value>
-                      </TableDrop.Td>
-                      <TableDrop.Td>
-                        <Label>Status</Label>
-                        <Status status={agent.status}>
-                          {agent.status === 'active' ? 'Ativo' : 'Inativo'}
-                        </Status>
-                      </TableDrop.Td>
-
-                      <TableDrop.Td>
-                        <DotsIcon onClick={() => toggleOptionsModal(agent._id)}>
+                        <DotsIcon onClick={() => toggleOptionsModal(department._id)}>
                           <MoreVertical />
                         </DotsIcon>
                         <ActionsModal
-                          isOpen={modalIsOpenList[agent._id]}
+                          isOpen={modalIsOpenList[department._id]}
                           closeFn={closeAnyActiveActionsModal}
                         >
-                          <ActionLink url={`/agents/${agent._id}`} isActive={true} icon={Eye}>
-                            Ver colaborador
+                          <ActionLink url={`/agents/${department._id}`} isActive={true} icon={Eye}>
+                            Ver departamento
                           </ActionLink>
-                          <ActionLink url={`/agents/${agent._id}/edit`} isActive={true} icon={Edit}>
-                           Editar colaborador
+                          <ActionLink
+                            url={`/agents/${department._id}/edit`}
+                            isActive={true}
+                            icon={Edit}
+                          >
+                            Editar departamento
                           </ActionLink>
                           <ActionButton
-                            onClick={() => removeAgent(agent._id)}
+                            onClick={() => removeDepartment(department._id)}
                             isActive={true}
                             icon={Trash}
                           >
-                            Excluir
+                            Excluir departamento
                           </ActionButton>
                         </ActionsModal>
-                        <MobileActionsToggle onClick={() => toggleOptionsModal(agent._id)} />
+                        <MobileActionsToggle onClick={() => toggleOptionsModal(department._id)} />
                       </TableDrop.Td>
                     </TableDrop.Row>
                   ))}
@@ -341,4 +280,4 @@ const Agents: React.FC = ({}) => {
   )
 }
 
-export default Agents
+export default Departments

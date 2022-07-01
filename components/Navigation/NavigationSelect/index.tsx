@@ -47,6 +47,9 @@ const NavigationSelect = (props: Props) => {
           <Link href='/roles'>
             <ModalOption onClick={props.closeFn}>Cargos</ModalOption>
           </Link>
+          <Link href='/departments'>
+            <ModalOption onClick={props.closeFn}>Departamentos</ModalOption>
+          </Link>
         </Modal>
       </>
     </Wrapper>

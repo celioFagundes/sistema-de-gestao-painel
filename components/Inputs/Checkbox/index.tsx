@@ -20,7 +20,7 @@ type Props = {
   errorMessage?: string
 }
 
-const Input = (props: Props) => {
+const CheckboxInput = (props: Props) => {
   return (
     <Wrapper>
       <Container>
@@ -47,4 +47,4 @@ const Input = (props: Props) => {
   )
 }
 
-export { Input  }
+export {  CheckboxInput }

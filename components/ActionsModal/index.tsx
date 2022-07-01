@@ -47,7 +47,7 @@ const ActionsModal = (props: Props) => {
 
 const ActionLink = (props: LinkOptions) => {
   return (
-    <Link href={props.url}>
+    <Link href={props.isActive ? props.url : '' }>
       <ActionContainer isActive={props.isActive}>
         <ActionIcon>
           <props.icon />
