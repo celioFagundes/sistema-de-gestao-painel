@@ -35,8 +35,8 @@ const InputWithDelete = (props: Props) => {
           value={props.value}
           placeholder={props.placeholder}
           onBlur = {props.onBlur}
-        />
-        <DeleteButton onClick={props.onClick}>
+        /> 
+        <DeleteButton type ='button'onClick={props.onClick}>
           <Trash/>
         </DeleteButton>
       </Container>
