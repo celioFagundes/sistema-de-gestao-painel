@@ -114,7 +114,6 @@ const CreateAgent: React.FC = () => {
     'http://localhost:3000/departments/',
     fetcher
   )
-  const { data: roles } = useSWR<RolesData>('http://localhost:3000/roles/', fetcher)
   const form = useFormik({
     validateOnChange: false,
     validateOnMount: false,
@@ -143,16 +142,22 @@ const CreateAgent: React.FC = () => {
       const validDate = `${dateParts[1]}/${dateParts[0]}/${dateParts[2]}`
       const newValues = { ...values, birth_date: validDate }
       const createData = await axios.post('http://localhost:3000/agents/', newValues)
-      if(createData.status){
+      if (createData.status) {
         router.push('/agents')
       }
     },
   })
+  const { data: roles } = useSWR<RolesData>(
+    `http://localhost:3000/roles/?slug=${form.values.department}`,
+    fetcher
+  )
+
   useEffect(() => {
-    const resetBranchValue = () => {
+    const resetBranchAndRoleValue = () => {
       form.setFieldValue('branch', '')
+      form.setFieldValue('role', '')
     }
-    resetBranchValue()
+    resetBranchAndRoleValue()
   }, [form.values.department])
 
   const handleIdentificationErrorMessage = (index: number) => {
@@ -292,6 +297,7 @@ const CreateAgent: React.FC = () => {
 
             <SectionOrganizationalData>
               <SectionTitle>Dados Organizacionais</SectionTitle>
+              {JSON.stringify(form.values, null, 2)}
               <SelectsContainerWrapper>
                 <SelectsRow>
                   <Select
@@ -317,7 +323,8 @@ const CreateAgent: React.FC = () => {
                     errorMessage={form.errors.role}
                     onBlur={form.handleBlur}
                   >
-                    {roles &&
+                    {form.values.department !== '' &&
+                      roles &&
                       roles.results.map(role => (
                         <Select.Option value={role.name} key={role._id}>
                           {role.name}

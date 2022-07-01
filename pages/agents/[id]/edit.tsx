@@ -123,7 +123,7 @@ const EditAgent: React.FC = () => {
     'http://localhost:3000/departments/',
     fetcher
   )
-  const { data: roles } = useSWR<RolesData>('http://localhost:3000/roles/', fetcher)
+  
   const form = useFormik({
     validateOnChange: false,
     validateOnMount: false,
@@ -157,6 +157,10 @@ const EditAgent: React.FC = () => {
       }
     },
   })
+  const { data: roles } = useSWR<RolesData>(
+    `http://localhost:3000/roles/?slug=${form.values.department}`,
+    fetcher
+  )
   useEffect(() => {
     const fillFormFields = () => {
       if (!agentData || !agentData?.agent) {
@@ -175,12 +179,13 @@ const EditAgent: React.FC = () => {
     fillFormFields()
   }, [agentData])
   useEffect(() => {
-    const resetBranchValue = () => {
+    const resetBranchAndRoleValue = () => {
       if (form.values.department !== agentData?.agent.department) {
         form.setFieldValue('branch', '')
+        form.setFieldValue('role', '')
       }
     }
-    resetBranchValue()
+    resetBranchAndRoleValue()
   }, [form.values.department])
 
   const handleIdentificationErrorMessage = (index: number) => {
@@ -321,6 +326,7 @@ const EditAgent: React.FC = () => {
 
               <SectionOrganizationalData>
                 <SectionTitle>Dados Organizacionais</SectionTitle>
+                {JSON.stringify(form.values, null, 2)}
                 <SelectsContainerWrapper>
                   <SelectsRow>
                     <Select
