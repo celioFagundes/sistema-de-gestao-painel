@@ -326,7 +326,6 @@ const EditAgent: React.FC = () => {
 
               <SectionOrganizationalData>
                 <SectionTitle>Dados Organizacionais</SectionTitle>
-                {JSON.stringify(form.values, null, 2)}
                 <SelectsContainerWrapper>
                   <SelectsRow>
                     <Select
