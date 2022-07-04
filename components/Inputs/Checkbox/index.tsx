@@ -1,48 +1,30 @@
-import { ChangeEventHandler, FocusEventHandler } from 'react'
+import { ChangeEventHandler, MouseEventHandler } from 'react'
+import { CheckboxOff, CheckboxOn } from '../../Icons'
 import {
-  Label,
   Wrapper,
   InputElement,
-  ErrorMessage,
   Container,
-  ErrorContainer,
-  ErrorIcon,
+  Label,
 } from './styles'
-import { BiError } from 'react-icons/bi'
 type Props = {
   id: string
-  label: string
   name: string
-  placeholder: string
-  value: string
-  onChange: ChangeEventHandler<HTMLInputElement>
-  onBlur?:  FocusEventHandler<HTMLInputElement>
-  errorMessage?: string
+  checked: boolean
+  onClick: MouseEventHandler<HTMLInputElement>
 }
 
 const CheckboxInput = (props: Props) => {
   return (
     <Wrapper>
-      <Container>
-        <Label htmlFor={props.id}>{props.label}</Label>
+        <Label htmlFor={props.id}>
+          {props.checked ? <CheckboxOn/> : <CheckboxOff/>}
+        </Label>
         <InputElement
           id={props.id}
+          type = 'checkbox'
           name={props.name}
-          onChange={props.onChange}
-          value={props.value}
-          placeholder={props.placeholder}
-          onBlur = {props.onBlur}
+          onClick={props.onClick}
         />
-      </Container>
-      {props.errorMessage && (
-        <ErrorContainer>
-          <ErrorIcon>
-            <BiError />
-          </ErrorIcon>
-
-          <ErrorMessage>{props.errorMessage}</ErrorMessage>
-        </ErrorContainer>
-      )}
     </Wrapper>
   )
 }
