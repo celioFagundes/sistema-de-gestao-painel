@@ -5,12 +5,12 @@ export enum Permissions{
 }
 export interface Permission{
   area: string
-  enabled: [Permissions]
+  enabled: [Permissions] | string[]
 }
 interface Role {
-  _id: string
+  _id?: string
   name: string
   department:string
-  permissions: Permission[]
+  permissions: Permission[] 
 }
 export type { Role }
