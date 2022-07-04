@@ -1,18 +1,12 @@
-import Image from 'next/image'
 import React from 'react'
+import { Header } from './Header'
 import {
   Container,
-  Data,
-  Header,
-  LogoContainer,
+ 
   Main,
   MainContainer,
   MainWrapper,
   Sidebar,
-  UserAvatar,
-  UserContainer,
-  UserData,
-  Username,
   Wrapper,
 } from './styles'
 
@@ -22,18 +16,7 @@ interface MainProps {
 const Layout = (props: MainProps) => {
   return (
     <Wrapper>
-      <Header>
-        <LogoContainer>
-         
-        </LogoContainer>
-        <UserContainer>
-          <UserAvatar>CP</UserAvatar>
-          <UserData>
-            <Username>Célio Pieczarka</Username>
-            <Data>meus dados</Data>
-          </UserData>
-        </UserContainer>
-      </Header>
+      <Header/>
       <Main>
         <Sidebar />
         <Container>
