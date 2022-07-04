@@ -19,7 +19,7 @@ import { Department } from '../../types/department'
 import Select from '../../components/Select'
 import { Row } from '../../styles/roles/create'
 import { Table } from '../../components/Tables'
-import { Permissions, Role } from '../../types/role'
+import { Permission, Permissions, Role } from '../../types/role'
 
 const areas = ['Dados gerais', 'Finanças', 'Pedidos', 'Promoções']
 interface DepartmentsData {
@@ -27,8 +27,12 @@ interface DepartmentsData {
   success: boolean
 }
 
-
-const initialValues: Role = {
+interface RoleInitialValue  {
+  name: string
+  department:string
+  permissions: Permission[] 
+}
+const initialValues: RoleInitialValue = {
   name: '',
   department: '',
   permissions: [

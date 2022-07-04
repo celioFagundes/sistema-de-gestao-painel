@@ -8,7 +8,7 @@ export interface Permission{
   enabled: [Permissions] | string[]
 }
 interface Role {
-  _id?: string
+  _id: string
   name: string
   department:string
   permissions: Permission[] 

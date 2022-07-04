@@ -1,403 +1,209 @@
-import Image from 'next/image'
 import Seo from '../../../components/Seo'
 import * as Yup from 'yup'
 import { useFormik } from 'formik'
 
 import Layout from '../../../components/Layout'
-import Select from '../../../components/Select'
 import { BackButton } from '../../../components/Navigation/'
-import { User } from '../../../components/Icons'
-import { CheckboxInput, PhoneInput } from '../../../components/Inputs'
+import { CheckboxInput, Input } from '../../../components/Inputs'
 
 import { PageTitle, SectionTitle } from '../../../styles/texts'
-import {
-  PageTitleWrapper,
-  Content,
-  SectionOrganizationalData,
-  SelectsContainerWrapper,
-  SelectsRow,
-  UserImage,
-  InputsWrapper,
-  PhoneInputsWrapper,
-  PhonesSection,
-} from '../../../styles/agents/create'
-import useSWR from 'swr'
-import { fetcher } from '../../../lib/fetcher'
-import { useEffect } from 'react'
+import { PageTitleWrapper, Content } from '../../../styles/agents/create'
+
 import axios from 'axios'
-import { parse } from 'date-fns'
-import { MaskedInput } from '../../../components/Inputs/Masked'
-import { AgentDetails, IdentificationInterface, PhoneInterface } from '../../../types/agent'
-import { Department } from '../../../types/department'
-import { Role } from '../../../types/role'
+
 import { Button } from '../../../components/Buttons'
 import { useRouter } from 'next/router'
+import useSWR from 'swr'
+import { fetcher } from '../../../lib/fetcher'
+import { Department } from '../../../types/department'
+import Select from '../../../components/Select'
+import { Row } from '../../../styles/roles/create'
+import { Table } from '../../../components/Tables'
+import { Permission, Permissions, Role } from '../../../types/role'
+import { useEffect } from 'react'
 
-
+const areas = ['Dados gerais', 'Finanças', 'Pedidos', 'Promoções']
 interface DepartmentsData {
   results: [Department]
   success: boolean
 }
-interface RolesData {
-  results: [Role]
-  success: boolean
+
+interface DataProps {
+  role: Role
 }
-interface AgentData {
-  agent: AgentDetails
-  success: boolean
+interface RoleInitialValue  {
+  name: string
+  department:string
+  permissions: Permission[] 
 }
-const AgentSchema = Yup.object().shape({
+const initialValues: RoleInitialValue = {
+  name: '',
+  department: '',
+  permissions: [
+    {
+      area: 'Dados gerais',
+      enabled: [],
+    },
+    {
+      area: 'Finanças',
+      enabled: [],
+    },
+    {
+      area: 'Pedidos',
+      enabled: [],
+    },
+    {
+      area: 'Promoções',
+      enabled: [],
+    },
+  ],
+}
+const RoleSchema = Yup.object().shape({
   name: Yup.string()
     .min(3, 'Por favor, informe um nome com pelo menos 3 caracteres')
-    .required('Por favor, informe o nome do colaborador'),
-  email: Yup.string()
-    .email('Por favor, informe um email válido')
-    .required('Por favor, informe um email '),
-  department: Yup.string().required('Por favor, selecione um departamento'),
-  role: Yup.string().required('Por favor, selecione um cargo'),
-  branch: Yup.string().required('Por favor, selecione uma unidade'),
-  status: Yup.string().required('Por favor, selecione o status'),
-  birth_date: Yup.date()
-    .transform((value, originalValue) => parse(originalValue, 'dd/mm/yyyy', new Date()))
-    .typeError('Por favor, informe uma data de nascimento válida')
-    .required('Por favor, informe a data de nascimento'),
-  phones: Yup.array().of(
+    .required('Por favor, informe o nome do cargo'),
+  department: Yup.string()
+    .min(1, 'Por favor, selecione o departamento')
+    .required('Por favor, selecione o departamento'),
+  permissions: Yup.array().of(
     Yup.object().shape({
-      ddi: Yup.string()
-        .transform((value, originalValue) => originalValue.replace('+', '').replace('x', ''))
-        .min(2, 'Digite um DDI válido')
-        .required('Digite o DDI.'),
-      ddd: Yup.string()
-        .transform((value, originalValue) =>
-          originalValue.replace('(', '').replace(')', '').replace('x', '')
-        )
-        .min(2, 'Digite um DDD válido')
-        .required('Digite o DDD.'),
-      number: Yup.string()
-        .transform((value, originalValue) =>
-          originalValue.replace('-', '').replace(' ', '').replace('x', '')
-        )
-        .min(9, 'Digite um número válido')
-        .required('Digite o número'),
-    })
-  ),
-  identification: Yup.array().of(
-    Yup.object().shape({
-      type: Yup.string().required('Por favor, informe um slug'),
-      number: Yup.string().when('type', type => {
-        if (type === 'CPF') {
-          return Yup.string()
-            .transform(value =>
-              value
-                .split('')
-                .filter((char: string) => char !== '-' && char !== '.' && char !== 'x')
-                .join('')
-            )
-            .min(11, 'Digite um CPF válido')
-            .required('Por favor, informe um CPF')
-        }
-        if (type === 'RG') {
-          return Yup.string()
-            .transform(value => value.replace('x', ''))
-            .min(10, 'Digite um RG válido')
-            .required('Por favor, informe um RG')
-        }
-        if (type === 'CNH') {
-          return Yup.string()
-            .transform(value => value.replace('x', ''))
-            .min(11, 'Digite uma CNH válida')
-            .required('Por favor, informe uma CNH')
-        }
-        return Yup.string()
-      }),
+      area: Yup.string().required('Por favor, informe a áre de permissão'),
+      enabled: Yup.array().of(Yup.string().oneOf(['read','write','delete'])),
     })
   ),
 })
-const EditAgent: React.FC = () => {
+const EditRole: React.FC = () => {
   const router = useRouter()
-  const { data: agentData, error } = useSWR<AgentData>(
-    router.query.id ? `http://localhost:3000/agents/${router.query.id}` : null,
+  const { data: roleData, error } = useSWR<DataProps>(
+    router.query.id ? `http://localhost:3000/roles/${router.query.id}` : null,
     fetcher
   )
   const { data: departments } = useSWR<DepartmentsData>(
     'http://localhost:3000/departments/',
     fetcher
   )
-  const { data: roles } = useSWR<RolesData>('http://localhost:3000/roles/', fetcher)
   const form = useFormik({
     validateOnChange: false,
     validateOnMount: false,
     validateOnBlur: true,
-    initialValues: {
-      name: '',
-      email: '',
-      birth_date: '',
-      department: '',
-      role: '',
-      branch: '',
-      status: '',
-      phones: [
-        { ddi: '', ddd: '', number: '' },
-        { ddi: '', ddd: '', number: '' },
-      ],
-      identification: [
-        { type: 'CPF', number: '' },
-        { type: 'RG', number: '' },
-        { type: 'CNH', number: '' },
-      ],
-    },
-    validationSchema: AgentSchema,
+    initialValues : initialValues,
+    validationSchema: RoleSchema,
     onSubmit: async values => {
-      const dateParts = values.birth_date.split('/')
-      const validDate = `${dateParts[1]}/${dateParts[0]}/${dateParts[2]}`
-      const newValues = { ...values, birth_date: validDate }
-      const updateData = await axios.put(`http://localhost:3000/agents/${router.query.id}`, newValues)
-      if(updateData.status){
-        router.push('/agents')
+      const updateData = await axios.put(`http://localhost:3000/roles/${router.query.id}`, values)
+      if (updateData.status) {
+        router.push('/roles')
       }
     },
   })
+
+  const handleCheckbox = (index:number, action: Permissions) =>{
+    const actionsList = [...form.values.permissions[index].enabled]
+    if(actionsList.includes(action)){
+      const removeAction = actionsList.filter(act => act !== action)
+      return form.setFieldValue(`permissions.${index}.enabled`, removeAction)
+    }
+    actionsList.push(action)
+    form.setFieldValue(`permissions.${index}.enabled`, actionsList)
+  }
+
   useEffect(() => {
     const fillFormFields = () => {
-      if (!agentData || !agentData?.agent) {
+      if (!roleData || !roleData?.role) {
         return null
       }
-      form.setFieldValue('name', agentData.agent.name)
-      form.setFieldValue('email', agentData.agent.email)
-      form.setFieldValue('birth_date', new Date(agentData.agent.birth_date).toLocaleDateString())
-      form.setFieldValue('department', agentData.agent.department)
-      form.setFieldValue('branch', agentData.agent.branch)
-      form.setFieldValue('role', agentData.agent.role)
-      form.setFieldValue('status', agentData.agent.status)
-      form.setFieldValue(`identification`, agentData.agent.identification)
-      form.setFieldValue(`phones`, agentData.agent.phones)
+      form.setFieldValue('name', roleData.role.name)
+      form.setFieldValue('department', roleData.role.department)
+      form.setFieldValue('permissions', roleData.role.permissions)
     }
     fillFormFields()
-  }, [agentData])
-  useEffect(() => {
-    const resetBranchValue = () => {
-      if (form.values.department !== agentData?.agent.department) {
-        form.setFieldValue('branch', '')
-      }
-    }
-    resetBranchValue()
-  }, [form.values.department])
-
-  const handleIdentificationErrorMessage = (index: number) => {
-    if (!form.errors.identification?.[index]) {
-      return ''
-    }
-    return (form.errors.identification[index] as IdentificationInterface).number
-  }
-  const handlePhoneInputErrorMessage = (index: number) => {
-    let errorMessage = ''
-    if (!form.errors.phones?.[index]) {
-      return ''
-    }
-    const convertToPhone = form.errors.phones[index] as PhoneInterface
-    if (convertToPhone.ddi) {
-      errorMessage += convertToPhone.ddi + ' '
-    }
-    if (convertToPhone.ddd) {
-      errorMessage += convertToPhone.ddd + ' '
-    }
-    if (convertToPhone.number) {
-      errorMessage += convertToPhone.number
-    }
-    return errorMessage
-  }
+  }, [roleData])
   return (
     <>
-      <Seo title='Criar novo colaborador' description='Criar novo colaborador' />
+      <Seo title='Editar cargo' description='Editar cargo' />
       <Layout>
         <PageTitleWrapper>
-          <BackButton url='/agents' />
-          <PageTitle>Editar colaborador</PageTitle>
+          <BackButton url='/roles' />
+          <PageTitle>Editar cargo</PageTitle>
         </PageTitleWrapper>
         <Content>
-          {agentData && agentData.agent && (
-            <form onSubmit={form.handleSubmit}>
-              <UserImage>
-                <User />
-              </UserImage>
-              <SectionTitle>Informações pessoais</SectionTitle>
-              <InputsWrapper>
-                <CheckboxInput
-                  id='name-input'
-                  name='name'
-                  label='Nome Completo'
-                  onChange={form.handleChange}
-                  value={form.values.name}
-                  placeholder='Insire o nome do colaborador'
-                  errorMessage={form.errors.name}
-                  onBlur={form.handleBlur}
-                />
-                <CheckboxInput
-                  id='email-input'
-                  name='email'
-                  label='Email'
-                  onChange={form.handleChange}
-                  value={form.values.email}
-                  placeholder='Insire o email do colaborador'
-                  errorMessage={form.errors.email}
-                  onBlur={form.handleBlur}
-                />
-                <MaskedInput
-                  mask='Data'
-                  id='nascimento-input'
-                  name='birth_date'
-                  label='Data de nascimento'
-                  value={form.values.birth_date}
-                  placeholder='Insire a data de nascimento do colaborador'
-                  errorMessage={form.errors.birth_date}
-                  onChange={form.handleChange}
-                  onBlur={form.handleBlur}
-                />
-              </InputsWrapper>
-              <SectionTitle>Documentos</SectionTitle>
+          <form onSubmit={form.handleSubmit}>
+            <Row>
+              <Input
+                id='name-input'
+                name='name'
+                label='Nome do cargo'
+                onChange={form.handleChange}
+                value={form.values.name}
+                placeholder='Insire o nome do cargo'
+                errorMessage={form.errors.name}
+                onBlur={form.handleBlur}
+              />
 
-              <InputsWrapper>
-                <MaskedInput
-                  mask='CPF'
-                  id='cpf-input'
-                  name={`identification.${[0]}.number`}
-                  label='CPF'
-                  onChange={form.handleChange}
-                  value={form.values.identification[0].number}
-                  placeholder='Insire o CPF do colaborador'
-                  errorMessage={handleIdentificationErrorMessage(0)}
-                  onBlur={form.handleBlur}
-                />
-                <MaskedInput
-                  mask='RG'
-                  id='rg-input'
-                  name={`identification.${[1]}.number`}
-                  label='RG'
-                  placeholder='Insire o RG do colaborador'
-                  onChange={form.handleChange}
-                  value={form.values.identification[1].number}
-                  errorMessage={handleIdentificationErrorMessage(1)}
-                  onBlur={form.handleBlur}
-                />
-                <MaskedInput
-                  mask='CNH'
-                  id='cnh-input'
-                  name={`identification.${[2]}.number`}
-                  label='Carteira de motorista'
-                  onChange={form.handleChange}
-                  value={form.values.identification[2].number}
-                  placeholder='Insire o n° de registro da CNH do colaborador'
-                  errorMessage={handleIdentificationErrorMessage(2)}
-                  onBlur={form.handleBlur}
-                />
-              </InputsWrapper>
-              <SectionTitle>Telefones</SectionTitle>
-              <PhonesSection>
-                <PhoneInputsWrapper>
-                  <PhoneInput
-                    ddiName={`phones.${[0]}.ddi`}
-                    dddName={`phones.${[0]}.ddd`}
-                    numberName={`phones.${[0]}.number`}
-                    ddiValue={form.values.phones[0].ddi}
-                    dddValue={form.values.phones[0].ddd}
-                    numberValue={form.values.phones[0].number}
-                    onChange={form.handleChange}
-                    errorMessage={handlePhoneInputErrorMessage(0)}
-                    onBlur={form.handleBlur}
-                  />
-                  <PhoneInput
-                    ddiName={`phones.${[1]}.ddi`}
-                    dddName={`phones.${[1]}.ddd`}
-                    numberName={`phones.${[1]}.number`}
-                    ddiValue={form.values.phones[1].ddi}
-                    dddValue={form.values.phones[1].ddd}
-                    numberValue={form.values.phones[1].number}
-                    onChange={form.handleChange}
-                    errorMessage={handlePhoneInputErrorMessage(1)}
-                    onBlur={form.handleBlur}
-                  />
-                </PhoneInputsWrapper>
-              </PhonesSection>
-
-              <SectionOrganizationalData>
-                <SectionTitle>Dados Organizacionais</SectionTitle>
-                <SelectsContainerWrapper>
-                  <SelectsRow>
-                    <Select
-                      name='department'
-                      label='Departamento'
-                      defaultValue={form.values.department}
-                      bgColor='#F5FAF8'
-                      onChange={form.handleChange}
-                      errorMessage={form.errors.department}
-                      onBlur={form.handleBlur}
-                    >
-                      {departments &&
-                        departments.results.map(dept => (
-                          <Select.Option value={dept.name} key={dept._id}>
-                            {dept.name}
-                          </Select.Option>
-                        ))}
-                    </Select>
-                    <Select
-                      name='role'
-                      label='Cargo'
-                      defaultValue={form.values.role}
-                      bgColor='#F5FAF8'
-                      onChange={form.handleChange}
-                      errorMessage={form.errors.role}
-                      onBlur={form.handleBlur}
-                    >
-                      {roles &&
-                        roles.results.map(role => (
-                          <Select.Option value={role.name} key={role._id}>
-                            {role.name}
-                          </Select.Option>
-                        ))}
-                    </Select>
-                  </SelectsRow>
-                  <SelectsRow>
-                    <Select
-                      name='branch'
-                      label='Unidade'
-                      defaultValue={form.values.branch}
-                      bgColor='#F5FAF8'
-                      onChange={form.handleChange}
-                      errorMessage={form.errors.branch}
-                      onBlur={form.handleBlur}
-                    >
-                      {departments &&
-                        form.values.department !== '' &&
-                        departments.results
-                          .filter(dept => dept.name === form.values.department)[0]
-                          .branches.map(branch => (
-                            <Select.Option key={branch} value={branch}>
-                              {branch}
-                            </Select.Option>
-                          ))}
-                    </Select>
-                    <Select
-                      name='status'
-                      label='Status'
-                      defaultValue={form.values.status}
-                      onChange={form.handleChange}
-                      bgColor='#F5FAF8'
-                      errorMessage={form.errors.status}
-                      onBlur={form.handleBlur}
-                    >
-                      <Select.Option value='active'>Ativo</Select.Option>
-                      <Select.Option value='inactive'>Inativo</Select.Option>
-                    </Select>
-                  </SelectsRow>
-                </SelectsContainerWrapper>
-              </SectionOrganizationalData>
-              <Button type='submit'>Confirmar edição</Button>
-            </form>
-          )}
+              <Select
+                name='department'
+                label='Departamento do cargo'
+                bgColor='#fff'
+                onChange={form.handleChange}
+                errorMessage={form.errors.department}
+                onBlur={form.handleBlur}
+                defaultValue = {form.values.department}
+              >
+                {departments &&
+                  departments.results.map(dept => (
+                    <Select.Option value={dept.name} key={dept._id}>
+                      {dept.name}
+                    </Select.Option>
+                  ))}
+              </Select>
+            </Row>
+            <SectionTitle>Permissões do cargo</SectionTitle>
+            <Table>
+              <Table.Header>
+                <Table.Row>
+                  <Table.Th>Área</Table.Th>
+                  <Table.Th>Ler</Table.Th>
+                  <Table.Th>Escrever</Table.Th>
+                  <Table.Th>Remover</Table.Th>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+              {areas.map((item,index) =>(
+                <Table.Row>
+                  <Table.Td>{item}</Table.Td>
+                  <Table.Td>
+                    <CheckboxInput
+                      id={`${item}-input-read`}
+                      name = {`read`}
+                      onClick={() => handleCheckbox(index, Permissions.Read)}
+                      checked={form.values.permissions[index].enabled.includes(Permissions.Read)}
+                    />
+                  </Table.Td>
+                  <Table.Td>
+                  <CheckboxInput
+                      id={`${item}-input-write`}
+                      name = {`write`}
+                      onClick={() => handleCheckbox(index, Permissions.Write)}
+                      checked={form.values.permissions[index].enabled.includes(Permissions.Write)}
+                    />
+                  </Table.Td>
+                  <Table.Td>
+                  <CheckboxInput
+                      id={`${item}-input-delete`}
+                      name = {`delete`}
+                      onClick={() => handleCheckbox(index, Permissions.Delete)}
+                      checked={form.values.permissions[index].enabled.includes(Permissions.Delete)}
+                    />
+                  </Table.Td>
+                </Table.Row>
+                 ))}
+              </Table.Body>
+            </Table>
+            <Button type='submit'>Confirmar edição</Button>
+          </form>
         </Content>
       </Layout>
     </>
   )
 }
 
-export default EditAgent
+export default EditRole
