@@ -17,24 +17,15 @@ export const PageTitleWrapper = styled.div`
   justify-content: flex-start;
   align-items: center;
 `
-export const SelectsRow = styled.div`
+export const Row = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 0.5fr;
   grid-gap: 24px;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
 `
-export const Checkbox = styled.div<IsActive>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 20px;
-  width: 20px;
-  background: ${props => (props.isActive ? '#1DD195' : '#fff')};
-  color: #fff;
-  border: ${props => (props.isActive ? '0' : '2px solid #CAD6D1')};
-  border-radius: 6px;
-`
+
+
