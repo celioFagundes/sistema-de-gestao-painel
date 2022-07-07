@@ -93,17 +93,7 @@ export const Main = styled.section`
     align-items: center;
   }
 `
-export const Sidebar = styled.aside`
-  display: block;
-  height: 100%;
-  width: 100%;
-  max-width: 300px;
-  border-right: 1px solid #fff;
-  box-shadow: 0px 4px 8px rgba(165, 171, 179, 0.16);
-  @media (max-width: 768px) {
-    display: none;
-  }
-`
+
 export const Container = styled.section`
   padding: 50px;
   width: 100%;

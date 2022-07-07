@@ -1,12 +1,11 @@
 import React from 'react'
 import { Header } from './Header'
+import { Sidebar } from './Sidebar'
 import {
   Container,
- 
   Main,
   MainContainer,
   MainWrapper,
-  Sidebar,
   Wrapper,
 } from './styles'
 
