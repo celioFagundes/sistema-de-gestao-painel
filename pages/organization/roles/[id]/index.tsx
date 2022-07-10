@@ -1,16 +1,16 @@
-import Seo from '../../../components/Seo'
+import Seo from '../../../../components/Seo'
 
-import Layout from '../../../components/Layout'
-import { Table } from '../../../components/Tables'
-import { BackButton } from '../../../components/Navigation/'
+import Layout from '../../../../components/Layout'
+import { Table } from '../../../../components/Tables'
+import { BackButton } from '../../../../components/Navigation/'
 
-import { CardsRow, Content, PageTitleWrapper } from '../../../styles/roles/details'
-import { PageTitle, SectionTitle } from '../../../styles/texts'
-import { CheckboxOn, CheckboxOff } from '../../../components/Icons/'
+import { CardsRow, Content, PageTitleWrapper } from '../../../../styles/roles/details'
+import { PageTitle, SectionTitle } from '../../../../styles/texts'
+import { CheckboxOn, CheckboxOff } from '../../../../components/Icons/'
 import useSWR from 'swr'
-import { fetcher } from '../../../lib/fetcher'
+import { fetcher } from '../../../../lib/fetcher'
 import { useRouter } from 'next/router'
-import { CardWithLabel } from '../../../components/Cards'
+import { CardWithLabel } from '../../../../components/Cards'
 
 interface Permission {
   area: string

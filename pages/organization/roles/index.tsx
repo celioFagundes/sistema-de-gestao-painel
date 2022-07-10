@@ -1,19 +1,19 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import Seo from '../../components/Seo'
+import Seo from '../../../components/Seo'
 
-import { TableDrop } from '../../components/Tables/TableToDropdown'
-import Layout from '../../components/Layout'
+import { TableDrop } from '../../../components/Tables/TableToDropdown'
+import Layout from '../../../components/Layout'
 import {
   ActionButton,
   ActionLink,
   ActionsModal,
   MobileActionsToggle,
-} from '../../components/ActionsModal'
-import { SearchInput } from '../../components/Inputs/'
-import { PageSwitcher, RecordsPerPageSelect } from '../../components/Pagination/'
-import { NavigateButton, NavigationSelect, NavigationTabs } from '../../components/Navigation/'
-import { Content, DropdownIcon, Value, Label, DotsIcon, BottomContainer } from '../../styles/roles'
-import { PageTitle, SectionTitle } from '../../styles/texts'
+} from '../../../components/ActionsModal'
+import { SearchInput } from '../../../components/Inputs/'
+import { PageSwitcher, RecordsPerPageSelect } from '../../../components/Pagination/'
+import { NavigateButton, NavigationSelect, NavigationTabs } from '../../../components/Navigation/'
+import { Content, DropdownIcon, Value, Label, DotsIcon, BottomContainer } from '../../../styles/roles'
+import { PageTitle, SectionTitle } from '../../../styles/texts'
 import {
   Eye,
   Down,
@@ -21,11 +21,11 @@ import {
   Edit,
   MoreVertical,
   Trash,
-} from '../../components/Icons/'
+} from '../../../components/Icons/'
 import useSWR from 'swr'
-import { fetcher } from '../../lib/fetcher'
-import { Role } from '../../types/role'
-import { SortButton, SortSelect } from '../../components/Sorting'
+import { fetcher } from '../../../lib/fetcher'
+import { Role } from '../../../types/role'
+import { SortButton, SortSelect } from '../../../components/Sorting'
 import axios from 'axios'
 
 const SORT_OPTIONS = [

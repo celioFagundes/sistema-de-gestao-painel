@@ -20,7 +20,6 @@ import Select from '../../../components/Select'
 import { Row } from '../../../styles/roles/create'
 import { Table } from '../../../components/Tables'
 import { Permission, Permissions, Role } from '../../../types/role'
-import { useEffect } from 'react'
 
 const areas = ['Dados gerais', 'Finanças', 'Pedidos', 'Promoções']
 interface DepartmentsData {
@@ -28,9 +27,6 @@ interface DepartmentsData {
   success: boolean
 }
 
-interface DataProps {
-  role: Role
-}
 interface RoleInitialValue  {
   name: string
   department:string
@@ -72,16 +68,12 @@ const RoleSchema = Yup.object().shape({
     })
   ),
 })
-const EditRole: React.FC = () => {
-  const router = useRouter()
-  const { data: roleData, error } = useSWR<DataProps>(
-    router.query.id ? `http://localhost:3000/roles/${router.query.id}` : null,
-    fetcher
-  )
+const CreateRole: React.FC = () => {
   const { data: departments } = useSWR<DepartmentsData>(
     'http://localhost:3000/departments/',
     fetcher
   )
+  const router = useRouter()
   const form = useFormik({
     validateOnChange: false,
     validateOnMount: false,
@@ -89,8 +81,8 @@ const EditRole: React.FC = () => {
     initialValues : initialValues,
     validationSchema: RoleSchema,
     onSubmit: async values => {
-      const updateData = await axios.put(`http://localhost:3000/roles/${router.query.id}`, values)
-      if (updateData.status) {
+      const createData = await axios.post('http://localhost:3000/roles/', values)
+      if (createData.status) {
         router.push('/roles')
       }
     },
@@ -105,25 +97,13 @@ const EditRole: React.FC = () => {
     actionsList.push(action)
     form.setFieldValue(`permissions.${index}.enabled`, actionsList)
   }
-
-  useEffect(() => {
-    const fillFormFields = () => {
-      if (!roleData || !roleData?.role) {
-        return null
-      }
-      form.setFieldValue('name', roleData.role.name)
-      form.setFieldValue('department', roleData.role.department)
-      form.setFieldValue('permissions', roleData.role.permissions)
-    }
-    fillFormFields()
-  }, [roleData])
   return (
     <>
-      <Seo title='Editar cargo' description='Editar cargo' />
+      <Seo title='Criar novo cargo' description='Criar novo cargo' />
       <Layout>
         <PageTitleWrapper>
           <BackButton url='/roles' />
-          <PageTitle>Editar cargo</PageTitle>
+          <PageTitle>Criar novo cargo</PageTitle>
         </PageTitleWrapper>
         <Content>
           <form onSubmit={form.handleSubmit}>
@@ -146,7 +126,6 @@ const EditRole: React.FC = () => {
                 onChange={form.handleChange}
                 errorMessage={form.errors.department}
                 onBlur={form.handleBlur}
-                defaultValue = {form.values.department}
               >
                 {departments &&
                   departments.results.map(dept => (
@@ -198,7 +177,7 @@ const EditRole: React.FC = () => {
                  ))}
               </Table.Body>
             </Table>
-            <Button type='submit'>Confirmar edição</Button>
+            <Button type='submit'>Criar</Button>
           </form>
         </Content>
       </Layout>
@@ -206,4 +185,4 @@ const EditRole: React.FC = () => {
   )
 }
 
-export default EditRole
+export default CreateRole

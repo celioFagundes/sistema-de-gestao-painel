@@ -15,11 +15,6 @@ import { Button } from '../../../components/Buttons'
 import { useRouter } from 'next/router'
 import { BranchWrapper, SectionBranches } from '../../../styles/departments/create'
 import { InputWithDelete } from '../../../components/Inputs/InputWithDelete'
-import { Role } from '../../../types/role'
-import useSWR from 'swr'
-import { fetcher } from '../../../lib/fetcher'
-import { useEffect } from 'react'
-import { Department } from '../../../types/department'
 
 const DepartmentSchema = Yup.object().shape({
   name: Yup.string()
@@ -31,17 +26,8 @@ const DepartmentSchema = Yup.object().shape({
       .required('Por favor informe o nome da unidade')
   ),
 })
-
-interface DepartmentData {
-  department: Department
-  success: boolean
-}
-const EditDepartment: React.FC = () => {
+const CreateDepartment: React.FC = () => {
   const router = useRouter()
-  const { data: departmentData, error } = useSWR<DepartmentData>(
-    router.query.id ? `http://localhost:3000/departments/${router.query.id}` : null,
-    fetcher
-  )
   const form = useFormik({
     validateOnChange: false,
     validateOnMount: false,
@@ -52,30 +38,20 @@ const EditDepartment: React.FC = () => {
     },
     validationSchema: DepartmentSchema,
     onSubmit: async values => {
-      const updateData = await axios.put(`http://localhost:3000/departments/${router.query.id}`, values)
-      if (updateData.status) {
+      const createData = await axios.post('http://localhost:3000/departments/', values)
+      if (createData.status) {
         router.push('/departments')
       }
     },
   })
 
-  useEffect(() => {
-    const fillFormFields = () => {
-      if (!departmentData|| !departmentData?.department) {
-        return null
-      }
-      form.setFieldValue('name', departmentData.department.name)
-      form.setFieldValue('branches', departmentData.department.branches)
-    }
-    fillFormFields()
-  }, [departmentData])
   return (
     <>
-      <Seo title='Editar departamento' description='Editar departamento' />
+      <Seo title='Criar novo departamento' description='Criar novo departamento' />
       <Layout>
         <PageTitleWrapper>
           <BackButton url='/departments' />
-          <PageTitle>Editar departamento</PageTitle>
+          <PageTitle>Criar novo departamento</PageTitle>
         </PageTitleWrapper>
         <Content>
           <form onSubmit={form.handleSubmit}>
@@ -122,7 +98,7 @@ const EditDepartment: React.FC = () => {
                 }}
               />
             </FormikProvider>
-            <Button type='submit'>Confirmar alterações</Button>
+            <Button type='submit'>Criar</Button>
           </form>
         </Content>
       </Layout>
@@ -130,4 +106,4 @@ const EditDepartment: React.FC = () => {
   )
 }
 
-export default EditDepartment
+export default CreateDepartment

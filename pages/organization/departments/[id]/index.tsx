@@ -1,20 +1,16 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import useSWR from 'swr'
-import { fetcher } from '../../../lib/fetcher'
-import { Down, Up } from '../../../components/Icons'
+import { fetcher } from '../../../../lib/fetcher'
 
-import Seo from '../../../components/Seo'
-import Layout from '../../../components/Layout'
-import { Table } from '../../../components/Tables'
-import { BackButton, NavigateButton } from '../../../components/Navigation/'
+import Seo from '../../../../components/Seo'
+import Layout from '../../../../components/Layout'
+import { Table } from '../../../../components/Tables'
+import { BackButton, } from '../../../../components/Navigation/'
 
-import { SortSelect, SortButton } from '../../../components/Sorting/'
-import { Content, DropdownIcon, Value, Label, PageTitleWrapper } from '../../../styles/agents'
-import { PageTitle, SectionTitle } from '../../../styles/texts'
-import axios from 'axios'
-import { Department } from '../../../types/department'
+import { Content, Value,  PageTitleWrapper } from '../../../../styles/agents'
+import { PageTitle, SectionTitle } from '../../../../styles/texts'
+import { Department } from '../../../../types/department'
 import { useRouter } from 'next/router'
-import { CardWithLabel } from '../../../components/Cards'
+import { CardWithLabel } from '../../../../components/Cards'
 
 interface DataProps {
   results: {

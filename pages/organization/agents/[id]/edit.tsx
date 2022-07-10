@@ -1,15 +1,15 @@
 import Image from 'next/image'
-import Seo from '../../../components/Seo'
+import Seo from '../../../../components/Seo'
 import * as Yup from 'yup'
 import { useFormik } from 'formik'
 
-import Layout from '../../../components/Layout'
-import Select from '../../../components/Select'
-import { BackButton } from '../../../components/Navigation/'
-import { User } from '../../../components/Icons'
-import {  Input, PhoneInput } from '../../../components/Inputs'
+import Layout from '../../../../components/Layout'
+import Select from '../../../../components/Select'
+import { BackButton } from '../../../../components/Navigation/'
+import { User } from '../../../../components/Icons'
+import {  Input, PhoneInput } from '../../../../components/Inputs'
 
-import { PageTitle, SectionTitle } from '../../../styles/texts'
+import { PageTitle, SectionTitle } from '../../../../styles/texts'
 import {
   PageTitleWrapper,
   Content,
@@ -20,17 +20,17 @@ import {
   InputsWrapper,
   PhoneInputsWrapper,
   PhonesSection,
-} from '../../../styles/agents/create'
+} from '../../../../styles/agents/create'
 import useSWR from 'swr'
-import { fetcher } from '../../../lib/fetcher'
+import { fetcher } from '../../../../lib/fetcher'
 import { useEffect } from 'react'
 import axios from 'axios'
 import { parse } from 'date-fns'
-import { MaskedInput } from '../../../components/Inputs/Masked'
-import { AgentDetails, IdentificationInterface, PhoneInterface } from '../../../types/agent'
-import { Department } from '../../../types/department'
-import { Role } from '../../../types/role'
-import { Button } from '../../../components/Buttons'
+import { MaskedInput } from '../../../../components/Inputs/Masked'
+import { AgentDetails, IdentificationInterface, PhoneInterface } from '../../../../types/agent'
+import { Department } from '../../../../types/department'
+import { Role } from '../../../../types/role'
+import { Button } from '../../../../components/Buttons'
 import { useRouter } from 'next/router'
 
 

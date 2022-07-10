@@ -1,25 +1,26 @@
-import Seo from '../../components/Seo'
+import Seo from '../../../../components/Seo'
 import * as Yup from 'yup'
 import { useFormik } from 'formik'
 
-import Layout from '../../components/Layout'
-import { BackButton } from '../../components/Navigation/'
-import { CheckboxInput, Input } from '../../components/Inputs'
+import Layout from '../../../../components/Layout'
+import { BackButton } from '../../../../components/Navigation/'
+import { CheckboxInput, Input } from '../../../../components/Inputs'
 
-import { PageTitle, SectionTitle } from '../../styles/texts'
-import { PageTitleWrapper, Content } from '../../styles/agents/create'
+import { PageTitle, SectionTitle } from '../../../../styles/texts'
+import { PageTitleWrapper, Content } from '../../../../styles/agents/create'
 
 import axios from 'axios'
 
-import { Button } from '../../components/Buttons'
+import { Button } from '../../../../components/Buttons'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
-import { fetcher } from '../../lib/fetcher'
-import { Department } from '../../types/department'
-import Select from '../../components/Select'
-import { Row } from '../../styles/roles/create'
-import { Table } from '../../components/Tables'
-import { Permission, Permissions, Role } from '../../types/role'
+import { fetcher } from '../../../../lib/fetcher'
+import { Department } from '../../../../types/department'
+import Select from '../../../../components/Select'
+import { Row } from '../../../../styles/roles/create'
+import { Table } from '../../../../components/Tables'
+import { Permission, Permissions, Role } from '../../../../types/role'
+import { useEffect } from 'react'
 
 const areas = ['Dados gerais', 'Finanças', 'Pedidos', 'Promoções']
 interface DepartmentsData {
@@ -27,6 +28,9 @@ interface DepartmentsData {
   success: boolean
 }
 
+interface DataProps {
+  role: Role
+}
 interface RoleInitialValue  {
   name: string
   department:string
@@ -68,12 +72,16 @@ const RoleSchema = Yup.object().shape({
     })
   ),
 })
-const CreateRole: React.FC = () => {
+const EditRole: React.FC = () => {
+  const router = useRouter()
+  const { data: roleData, error } = useSWR<DataProps>(
+    router.query.id ? `http://localhost:3000/roles/${router.query.id}` : null,
+    fetcher
+  )
   const { data: departments } = useSWR<DepartmentsData>(
     'http://localhost:3000/departments/',
     fetcher
   )
-  const router = useRouter()
   const form = useFormik({
     validateOnChange: false,
     validateOnMount: false,
@@ -81,8 +89,8 @@ const CreateRole: React.FC = () => {
     initialValues : initialValues,
     validationSchema: RoleSchema,
     onSubmit: async values => {
-      const createData = await axios.post('http://localhost:3000/roles/', values)
-      if (createData.status) {
+      const updateData = await axios.put(`http://localhost:3000/roles/${router.query.id}`, values)
+      if (updateData.status) {
         router.push('/roles')
       }
     },
@@ -97,13 +105,25 @@ const CreateRole: React.FC = () => {
     actionsList.push(action)
     form.setFieldValue(`permissions.${index}.enabled`, actionsList)
   }
+
+  useEffect(() => {
+    const fillFormFields = () => {
+      if (!roleData || !roleData?.role) {
+        return null
+      }
+      form.setFieldValue('name', roleData.role.name)
+      form.setFieldValue('department', roleData.role.department)
+      form.setFieldValue('permissions', roleData.role.permissions)
+    }
+    fillFormFields()
+  }, [roleData])
   return (
     <>
-      <Seo title='Criar novo cargo' description='Criar novo cargo' />
+      <Seo title='Editar cargo' description='Editar cargo' />
       <Layout>
         <PageTitleWrapper>
           <BackButton url='/roles' />
-          <PageTitle>Criar novo cargo</PageTitle>
+          <PageTitle>Editar cargo</PageTitle>
         </PageTitleWrapper>
         <Content>
           <form onSubmit={form.handleSubmit}>
@@ -126,6 +146,7 @@ const CreateRole: React.FC = () => {
                 onChange={form.handleChange}
                 errorMessage={form.errors.department}
                 onBlur={form.handleBlur}
+                defaultValue = {form.values.department}
               >
                 {departments &&
                   departments.results.map(dept => (
@@ -177,7 +198,7 @@ const CreateRole: React.FC = () => {
                  ))}
               </Table.Body>
             </Table>
-            <Button type='submit'>Criar</Button>
+            <Button type='submit'>Confirmar edição</Button>
           </form>
         </Content>
       </Layout>
@@ -185,4 +206,4 @@ const CreateRole: React.FC = () => {
   )
 }
 
-export default CreateRole
+export default EditRole

@@ -1,20 +1,24 @@
 import Image from 'next/image'
-import Seo from '../../components/Seo'
+import Seo from '../../../../components/Seo'
 import * as Yup from 'yup'
 import { FieldArray, FormikProvider, useFormik } from 'formik'
 
-import Layout from '../../components/Layout'
-import { BackButton } from '../../components/Navigation/'
-import { Input } from '../../components/Inputs'
+import Layout from '../../../../components/Layout'
+import { BackButton } from '../../../../components/Navigation/'
+import { Input } from '../../../../components/Inputs'
 
-import { PageTitle, SectionTitle } from '../../styles/texts'
-import { PageTitleWrapper, Content, InputsWrapper } from '../../styles/agents/create'
+import { PageTitle, SectionTitle } from '../../../../styles/texts'
+import { PageTitleWrapper, Content, InputsWrapper } from '../../../../styles/agents/create'
 
 import axios from 'axios'
-import { Button } from '../../components/Buttons'
+import { Button } from '../../../../components/Buttons'
 import { useRouter } from 'next/router'
-import { BranchWrapper, SectionBranches } from '../../styles/departments/create'
-import { InputWithDelete } from '../../components/Inputs/InputWithDelete'
+import { BranchWrapper, SectionBranches } from '../../../../styles/departments/create'
+import { InputWithDelete } from '../../../../components/Inputs/InputWithDelete'
+import useSWR from 'swr'
+import { fetcher } from '../../../../lib/fetcher'
+import { useEffect } from 'react'
+import { Department } from '../../../../types/department'
 
 const DepartmentSchema = Yup.object().shape({
   name: Yup.string()
@@ -26,8 +30,17 @@ const DepartmentSchema = Yup.object().shape({
       .required('Por favor informe o nome da unidade')
   ),
 })
-const CreateDepartment: React.FC = () => {
+
+interface DepartmentData {
+  department: Department
+  success: boolean
+}
+const EditDepartment: React.FC = () => {
   const router = useRouter()
+  const { data: departmentData, error } = useSWR<DepartmentData>(
+    router.query.id ? `http://localhost:3000/departments/${router.query.id}` : null,
+    fetcher
+  )
   const form = useFormik({
     validateOnChange: false,
     validateOnMount: false,
@@ -38,20 +51,30 @@ const CreateDepartment: React.FC = () => {
     },
     validationSchema: DepartmentSchema,
     onSubmit: async values => {
-      const createData = await axios.post('http://localhost:3000/departments/', values)
-      if (createData.status) {
+      const updateData = await axios.put(`http://localhost:3000/departments/${router.query.id}`, values)
+      if (updateData.status) {
         router.push('/departments')
       }
     },
   })
 
+  useEffect(() => {
+    const fillFormFields = () => {
+      if (!departmentData|| !departmentData?.department) {
+        return null
+      }
+      form.setFieldValue('name', departmentData.department.name)
+      form.setFieldValue('branches', departmentData.department.branches)
+    }
+    fillFormFields()
+  }, [departmentData])
   return (
     <>
-      <Seo title='Criar novo departamento' description='Criar novo departamento' />
+      <Seo title='Editar departamento' description='Editar departamento' />
       <Layout>
         <PageTitleWrapper>
           <BackButton url='/departments' />
-          <PageTitle>Criar novo departamento</PageTitle>
+          <PageTitle>Editar departamento</PageTitle>
         </PageTitleWrapper>
         <Content>
           <form onSubmit={form.handleSubmit}>
@@ -98,7 +121,7 @@ const CreateDepartment: React.FC = () => {
                 }}
               />
             </FormikProvider>
-            <Button type='submit'>Criar</Button>
+            <Button type='submit'>Confirmar alterações</Button>
           </form>
         </Content>
       </Layout>
@@ -106,4 +129,4 @@ const CreateDepartment: React.FC = () => {
   )
 }
 
-export default CreateDepartment
+export default EditDepartment

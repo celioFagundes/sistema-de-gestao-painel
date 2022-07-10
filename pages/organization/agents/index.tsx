@@ -1,22 +1,21 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import useSWR from 'swr'
-import Image from 'next/image'
-import { fetcher } from '../../lib/fetcher'
-import { Eye, Down, MoreVertical, Trash, Up, Edit } from '../../components/Icons'
+import { fetcher } from '../../../lib/fetcher'
+import { Eye, Down, MoreVertical, Trash, Up, Edit } from '../../../components/Icons'
 
-import Seo from '../../components/Seo'
-import Layout from '../../components/Layout'
-import { TableDrop } from '../../components/Tables'
-import { SearchInput } from '../../components/Inputs/'
-import { PageSwitcher, RecordsPerPageSelect } from '../../components/Pagination/'
-import { NavigationTabs, NavigationSelect, NavigateButton } from '../../components/Navigation/'
+import Seo from '../../../components/Seo'
+import Layout from '../../../components/Layout'
+import { TableDrop } from '../../../components/Tables'
+import { SearchInput } from '../../../components/Inputs/'
+import { PageSwitcher, RecordsPerPageSelect } from '../../../components/Pagination/'
+import { NavigationTabs, NavigationSelect, NavigateButton } from '../../../components/Navigation/'
 import {
   ActionsModal,
   MobileActionsToggle,
   ActionLink,
   ActionButton,
-} from '../../components/ActionsModal'
-import { SortSelect, SortButton } from '../../components/Sorting/'
+} from '../../../components/ActionsModal'
+import { SortSelect, SortButton } from '../../../components/Sorting/'
 import {
   AvatarNameContainer,
   ImageWrapper,
@@ -28,9 +27,9 @@ import {
   Value,
   Label,
   DotsIcon,
-} from '../../styles/agents'
-import { PageTitle, SectionTitle } from '../../styles/texts'
-import { Agent } from '../../types/agent'
+} from '../../../styles/agents'
+import { PageTitle, SectionTitle } from '../../../styles/texts'
+import { Agent } from '../../../types/agent'
 import axios from 'axios'
 
 const SORT_OPTIONS = [
