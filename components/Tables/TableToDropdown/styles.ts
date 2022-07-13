@@ -55,7 +55,7 @@ export const Th = styled.div<GridSpan>`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  width: 100%;
+  width: min-content;
   margin-right: 10px;
   text-align: left;
   color: #587169;
@@ -63,8 +63,16 @@ export const Th = styled.div<GridSpan>`
   font-style: normal;
   font-weight: 600;
   font-size: 12px;
+  
+  
   &:first-of-type {
     grid-column: ${props => props.gridSpan && 'span 2'};
+  }
+  @media (max-width: 1150px) {
+    
+    &:first-of-type {
+      grid-column: span 0;
+    }
   }
 `
 export const Td = styled.div<GridSpan>`
@@ -79,11 +87,18 @@ export const Td = styled.div<GridSpan>`
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
+  
   &:first-of-type {
     grid-column: ${props => props.gridSpan && 'span 2'};
   }
   &:last-of-type {
     justify-content: flex-end;
+  }
+  @media (max-width: 1150px) {
+    
+    &:first-of-type {
+      grid-column: span 0;
+    }
   }
   @media (max-width: 768px) {
     flex-direction: column;
@@ -99,5 +114,3 @@ export const Td = styled.div<GridSpan>`
     }
   }
 `
-
-

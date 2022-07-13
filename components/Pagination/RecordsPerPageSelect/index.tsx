@@ -10,7 +10,7 @@ const RecordsPerPageSelect = (props: Props) => {
   return (
     <Wrapper>
       <Message>
-        Total : {props.totalDocs} registros | Exibir {props.limit} por página
+        Total : {props.totalDocs} | Exibir {props.limit}
       </Message>
       <Container htmlFor='pagination-select'>
         <Select

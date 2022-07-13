@@ -204,7 +204,7 @@ const Agents: React.FC = ({}) => {
                 <TableDrop.Header>
                   <TableDrop.Row numberOfColumns={7}>
                     <TableDrop.Th gridSpan>
-                      Nome Completo
+                      Nome completo
                       <SortButton
                         field='name'
                         onClick={handleSortButton}
@@ -212,7 +212,7 @@ const Agents: React.FC = ({}) => {
                       />
                     </TableDrop.Th>
                     <TableDrop.Th gridSpan>
-                      Departamento
+                    Departamento
                       <SortButton
                         field='department'
                         onClick={handleSortButton}
