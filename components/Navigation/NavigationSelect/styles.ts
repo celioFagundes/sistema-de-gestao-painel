@@ -50,7 +50,7 @@ export const ModalBackground = styled.div<IsOpen>`
   height: 100vh;
   width: 100%;
   transition: all 0.4s ease-in-out;
-  background-color: ${props => (props.isOpen ? 'rgba(0,0,0,0.4)' : 'transparent')}; ;
+  background-color: ${props => (props.isOpen ? 'rgba(0,0,0,0.4)' : 'transparent')};
 `
 export const ModalHeader = styled.div`
   display: flex;

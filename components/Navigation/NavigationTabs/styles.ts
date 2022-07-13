@@ -26,6 +26,9 @@ export const TabLink = styled.a<IsActive>`
   font-size: 14px;
   cursor: pointer;
   transition: all 200ms ease-in-out;
+  @media (max-width: 1100px) {
+    width: 160px;
+  }
   &:hover {
     color: ${props => !props.isActive && '#587169'};
     border-color: ${props => !props.isActive && '#abe0ce'};

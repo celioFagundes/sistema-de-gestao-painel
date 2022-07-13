@@ -86,7 +86,9 @@ export const Main = styled.section`
   height: 100%;
   width: 100%;
   background-color: #fff;
-
+  @media (max-width: 1100px) {
+    grid-template-columns: max-content 1fr;
+  }
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     justify-content: center;
