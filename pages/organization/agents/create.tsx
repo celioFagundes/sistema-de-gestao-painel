@@ -143,7 +143,7 @@ const CreateAgent: React.FC = () => {
       const newValues = { ...values, birth_date: validDate }
       const createData = await axios.post('http://localhost:3000/agents/', newValues)
       if (createData.status) {
-        router.push('/agents')
+        router.push('/organization/agents')
       }
     },
   })
@@ -188,7 +188,7 @@ const CreateAgent: React.FC = () => {
       <Seo title='Criar novo colaborador' description='Criar novo colaborador' />
       <Layout>
         <PageTitleWrapper>
-          <BackButton url='/agents' />
+          <BackButton url='/organization/agents' />
           <PageTitle>Criar novo colaborador</PageTitle>
         </PageTitleWrapper>
         <Content>

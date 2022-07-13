@@ -91,7 +91,7 @@ const EditRole: React.FC = () => {
     onSubmit: async values => {
       const updateData = await axios.put(`http://localhost:3000/roles/${router.query.id}`, values)
       if (updateData.status) {
-        router.push('/roles')
+        router.push('/organization/roles')
       }
     },
   })
@@ -122,7 +122,7 @@ const EditRole: React.FC = () => {
       <Seo title='Editar cargo' description='Editar cargo' />
       <Layout>
         <PageTitleWrapper>
-          <BackButton url='/roles' />
+          <BackButton url='/organization/roles' />
           <PageTitle>Editar cargo</PageTitle>
         </PageTitleWrapper>
         <Content>

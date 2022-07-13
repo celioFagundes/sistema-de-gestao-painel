@@ -1,10 +1,10 @@
 import Image from 'next/image'
-import Seo from '../../../components/Seo'
+import Seo from '../../../../components/Seo'
 import useSWR from 'swr'
-import { fetcher } from '../../../lib/fetcher'
-import Layout from '../../../components/Layout'
-import { BackButton } from '../../../components/Navigation/'
-import { Card, CardIdentification, CardPhone, CardWithLabel } from '../../../components/Cards'
+import { fetcher } from '../../../../lib/fetcher'
+import Layout from '../../../../components/Layout'
+import { BackButton } from '../../../../components/Navigation/'
+import { Card, CardIdentification, CardPhone, CardWithLabel } from '../../../../components/Cards'
 
 import {
   PageTitleWrapper,
@@ -18,11 +18,11 @@ import {
   UserImage,
   OrganizationalCardsWrapper,
   OrganizationalCardsRow,
-} from '../../../styles/agents/details'
-import { PageTitle, SectionTitle } from '../../../styles/texts'
-import { User, Calendar } from '../../../components/Icons'
+} from '../../../../styles/agents/details'
+import { PageTitle, SectionTitle } from '../../../../styles/texts'
+import { User, Calendar } from '../../../../components/Icons'
 import { useRouter } from 'next/router'
-import { AgentDetails } from '../../../types/agent'
+import { AgentDetails } from '../../../../types/agent'
 
 interface DataProps {
   agent: AgentDetails
@@ -40,7 +40,7 @@ const Agent: React.FC = () => {
       <Seo title='Detalhe do colaborador' description='Detalhes do colaborador' />
       <Layout>
         <PageTitleWrapper>
-          <BackButton url='/agents' />
+          <BackButton url='/organization/agents' />
           <PageTitle>Detalhes do colaborador</PageTitle>
         </PageTitleWrapper>
         {data && (

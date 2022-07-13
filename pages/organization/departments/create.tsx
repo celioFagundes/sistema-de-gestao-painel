@@ -40,7 +40,7 @@ const CreateDepartment: React.FC = () => {
     onSubmit: async values => {
       const createData = await axios.post('http://localhost:3000/departments/', values)
       if (createData.status) {
-        router.push('/departments')
+        router.push('/organization/departments')
       }
     },
   })
@@ -50,7 +50,7 @@ const CreateDepartment: React.FC = () => {
       <Seo title='Criar novo departamento' description='Criar novo departamento' />
       <Layout>
         <PageTitleWrapper>
-          <BackButton url='/departments' />
+          <BackButton url='/organization/departments' />
           <PageTitle>Criar novo departamento</PageTitle>
         </PageTitleWrapper>
         <Content>

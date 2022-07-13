@@ -161,13 +161,13 @@ const Roles: React.FC = () => {
         <PageTitle>Organização</PageTitle>
         <Content>
           <NavigationTabs>
-            <NavigationTabs.Tab url='/agents' isActive={false}>
+            <NavigationTabs.Tab url='/organization/agents' isActive={false}>
               Colaboradores
             </NavigationTabs.Tab>
-            <NavigationTabs.Tab url='/roles' isActive={true}>
+            <NavigationTabs.Tab url='/organization/roles' isActive={true}>
               Cargos
             </NavigationTabs.Tab>
-            <NavigationTabs.Tab url='/departments' isActive={false}>
+            <NavigationTabs.Tab url='/organization/departments' isActive={false}>
               Departamentos
             </NavigationTabs.Tab>
           </NavigationTabs>
@@ -180,7 +180,7 @@ const Roles: React.FC = () => {
           />
           <SearchInput onSubmit={handleSearchInput} querySlug={queryOptions.slug} />
           <SectionTitle>Listagem de cargos e permissões</SectionTitle>
-          <NavigateButton url='/roles/create' label='Novo cargo' />
+          <NavigateButton url='/organization/roles/create' label='Novo cargo' />
           <SortSelect
             isOpen={showSortSelect}
             openFn={() => toggleSortSelectModal(true)}
@@ -245,10 +245,10 @@ const Roles: React.FC = () => {
                           isOpen={modalIsOpenList[role._id]}
                           closeFn={closeAnyActiveOptionsModal}
                         >
-                          <ActionLink url={`/roles/${role._id}`} isActive={true} icon={Eye}>
+                          <ActionLink url={`/organization/roles/${role._id}`} isActive={true} icon={Eye}>
                             Ver cargo
                           </ActionLink>
-                          <ActionLink url={`/roles/${role._id}/edit`} isActive={true} icon={Edit}>
+                          <ActionLink url={`/organization/roles/${role._id}/edit`} isActive={true} icon={Edit}>
                             Editar
                           </ActionLink>
                           <ActionButton

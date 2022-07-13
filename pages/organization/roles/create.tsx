@@ -83,7 +83,7 @@ const CreateRole: React.FC = () => {
     onSubmit: async values => {
       const createData = await axios.post('http://localhost:3000/roles/', values)
       if (createData.status) {
-        router.push('/roles')
+        router.push('/organization/roles')
       }
     },
   })
@@ -102,7 +102,7 @@ const CreateRole: React.FC = () => {
       <Seo title='Criar novo cargo' description='Criar novo cargo' />
       <Layout>
         <PageTitleWrapper>
-          <BackButton url='/roles' />
+          <BackButton url='/organization/roles' />
           <PageTitle>Criar novo cargo</PageTitle>
         </PageTitleWrapper>
         <Content>

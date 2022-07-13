@@ -153,7 +153,7 @@ const EditAgent: React.FC = () => {
       const newValues = { ...values, birth_date: validDate }
       const updateData = await axios.put(`http://localhost:3000/agents/${router.query.id}`, newValues)
       if(updateData.status){
-        router.push('/agents')
+        router.push('/organization/agents')
       }
     },
   })

@@ -41,13 +41,13 @@ const NavigationSelect = (props: Props) => {
               <CloseX />
             </Icon>
           </ModalHeader>
-          <Link href='/agents'>
+          <Link href='/organization/agents'>
             <ModalOption onClick={props.closeFn}>Colaboradores</ModalOption>
           </Link>
-          <Link href='/roles'>
+          <Link href='/organization/roles'>
             <ModalOption onClick={props.closeFn}>Cargos</ModalOption>
           </Link>
-          <Link href='/departments'>
+          <Link href='/organization/departments'>
             <ModalOption onClick={props.closeFn}>Departamentos</ModalOption>
           </Link>
         </Modal>

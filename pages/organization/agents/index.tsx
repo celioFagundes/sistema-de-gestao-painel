@@ -169,13 +169,13 @@ const Agents: React.FC = ({}) => {
         <PageTitle>Organização</PageTitle>
         <Content>
           <NavigationTabs>
-            <NavigationTabs.Tab url='/agents' isActive={true}>
+            <NavigationTabs.Tab url='/organization/agents' isActive={true}>
               Colaboradores
             </NavigationTabs.Tab>
-            <NavigationTabs.Tab url='/roles' isActive={false}>
+            <NavigationTabs.Tab url='/organization/roles' isActive={false}>
               Cargos
             </NavigationTabs.Tab>
-            <NavigationTabs.Tab url='/departments' isActive={false}>
+            <NavigationTabs.Tab url='/organization/departments' isActive={false}>
               Departamentos
             </NavigationTabs.Tab>
           </NavigationTabs>
@@ -187,7 +187,7 @@ const Agents: React.FC = ({}) => {
           />
           <SearchInput onSubmit={handleSearchInput} querySlug={queryOptions.slug} />
           <SectionTitle>Listagem de colaboradores</SectionTitle>
-          <NavigateButton url='/agents/create' label='Novo colaborador'/>
+          <NavigateButton url='/organization/agents/create' label='Novo colaborador'/>
           <SortSelect
             isOpen={showSortSelect}
             openFn={() => toggleSortSelectModal(true)}
@@ -294,10 +294,10 @@ const Agents: React.FC = ({}) => {
                           isOpen={modalIsOpenList[agent._id]}
                           closeFn={closeAnyActiveActionsModal}
                         >
-                          <ActionLink url={`/agents/${agent._id}`} isActive={true} icon={Eye}>
+                          <ActionLink url={`/organization/agents/${agent._id}`} isActive={true} icon={Eye}>
                             Ver colaborador
                           </ActionLink>
-                          <ActionLink url={`/agents/${agent._id}/edit`} isActive={true} icon={Edit}>
+                          <ActionLink url={`/organization/agents/${agent._id}/edit`} isActive={true} icon={Edit}>
                            Editar colaborador
                           </ActionLink>
                           <ActionButton

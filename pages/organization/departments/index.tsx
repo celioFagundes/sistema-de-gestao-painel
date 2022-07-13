@@ -161,13 +161,13 @@ const Departments: React.FC = ({}) => {
         <PageTitle>Organização</PageTitle>
         <Content>
           <NavigationTabs>
-            <NavigationTabs.Tab url='/agents' isActive={false}>
+            <NavigationTabs.Tab url='/organization/agents' isActive={false}>
               Colaboradores
             </NavigationTabs.Tab>
-            <NavigationTabs.Tab url='/roles' isActive={false}>
+            <NavigationTabs.Tab url='/organization/roles' isActive={false}>
               Cargos
             </NavigationTabs.Tab>
-            <NavigationTabs.Tab url='/departments' isActive={true}>
+            <NavigationTabs.Tab url='/organization/departments' isActive={true}>
               Departamentos
             </NavigationTabs.Tab>
           </NavigationTabs>
@@ -179,7 +179,7 @@ const Departments: React.FC = ({}) => {
           />
           <SearchInput onSubmit={handleSearchInput} querySlug={queryOptions.slug} />
           <SectionTitle>Listagem de departamentos</SectionTitle>
-          <NavigateButton url='/departments/create' label='Novo departamento' />
+          <NavigateButton url='/organization/departments/create' label='Novo departamento' />
           <SortSelect
             isOpen={showSortSelect}
             openFn={() => toggleSortSelectModal(true)}
@@ -230,11 +230,11 @@ const Departments: React.FC = ({}) => {
                           isOpen={modalIsOpenList[department._id]}
                           closeFn={closeAnyActiveActionsModal}
                         >
-                          <ActionLink url={`/departments/${department._id}`} isActive={true} icon={Eye}>
+                          <ActionLink url={`/organization/departments/${department._id}`} isActive={true} icon={Eye}>
                             Ver departamento
                           </ActionLink>
                           <ActionLink
-                            url={`/departments/${department._id}/edit`}
+                            url={`/organization/departments/${department._id}/edit`}
                             isActive={true}
                             icon={Edit}
                           >

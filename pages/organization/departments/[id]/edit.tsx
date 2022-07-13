@@ -53,7 +53,7 @@ const EditDepartment: React.FC = () => {
     onSubmit: async values => {
       const updateData = await axios.put(`http://localhost:3000/departments/${router.query.id}`, values)
       if (updateData.status) {
-        router.push('/departments')
+        router.push('/organization/departments')
       }
     },
   })
@@ -73,7 +73,7 @@ const EditDepartment: React.FC = () => {
       <Seo title='Editar departamento' description='Editar departamento' />
       <Layout>
         <PageTitleWrapper>
-          <BackButton url='/departments' />
+          <BackButton url='/organization/departments' />
           <PageTitle>Editar departamento</PageTitle>
         </PageTitleWrapper>
         <Content>

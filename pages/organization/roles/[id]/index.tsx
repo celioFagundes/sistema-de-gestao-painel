@@ -36,7 +36,7 @@ const Role: React.FC = () => {
       <Seo title='Criar novo cargo' description='Criação de um novo cargo' />
       <Layout>
         <PageTitleWrapper>
-          <BackButton url='/roles' />
+          <BackButton url='/organization/roles' />
           <PageTitle>Cargos e Permissôes</PageTitle>
         </PageTitleWrapper>
         <Content>

@@ -46,7 +46,7 @@ const DepartmentsDetails: React.FC = ({}) => {
       <Seo title='Detalhes do Departamentos' description='Detalhes do Departamentos' />
       <Layout>
         <PageTitleWrapper>
-          <BackButton url='/departments' />
+          <BackButton url='/organization/departments' />
           <PageTitle>Detalhes do departamento</PageTitle>
         </PageTitleWrapper>
         <Content>
